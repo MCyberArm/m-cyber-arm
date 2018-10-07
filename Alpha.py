@@ -29,11 +29,16 @@ def handleInput():
 
 def printHelp():
 	print("Help Menu Here")
-
+	print("Controls:"):
+	print("Press 
 
 def main():
 	handleInput()
 
+
+def moveArm(char key):
+	if key == "w":
+		#Move upwards
 
 
 if __name__ == '__main__':
