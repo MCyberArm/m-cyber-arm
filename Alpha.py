@@ -13,7 +13,7 @@ Neil Kenney, nfkenney@umich.edu
 
 import RPi.GPIO as GPIO
 import time
-
+import mscvrt
 portNum = 24
 
 
@@ -24,35 +24,40 @@ def setupGPIO():
 	GPIO.setup(portNum, GPIO.OUT)
 
 def handleInput():
-	print('Hello, this program is designed to control a basic mechanical arm through human input. Type "help" for usage instructions.')
-	while true:
-		inputString = input("Enter a command here, or type  'help' for more options")
-		if inputString == "help" or inputString == "Help":
+	print('Hello, this program is designed to control a basic mechanical arm through human input. Type "h" for usage instructions.\n')
+	while True:
+		inputString = input("Enter a command here, or type  'help' for more options\n")
+		if inputString == 'h' or inputString == 'H':
 			printHelp()
-		elif(char(inputString) == 'w' or char(intputString) == "W" or char(inputString) == "S" or char(inputString) == 'w'):
-			moveArm(char(inputString))
+		elif(inputString == 'w' or inputString == "W" or inputString == "S" or inputString == 's'):
+			moveArm(inputString)
 		else:
-			print("ERROR! Invalid Input")
+			print('ERROR! Invalid Input. Type "help" for controls')
 			printHelp()
 
 def printHelp():
 	print("Help Menu Here")
-	print("Controls:"):
+	print("Controls:")
 	print("Key			Function")
 	print("W			Move Arm Forward")
 	print("S			Move Arm Backward")
 	print("H			Print this help message")
+	print("Q			Quit the Application")
 
 def main():
-	handleInput()
+	setupGPIO()
+	try:
+		handleInput()
+	except KeyboardInterrupt:
+		GPIO.output(portNum, 0)
+		GPIO.cleanup()
 
-
-def moveArm(char key):
-	if key == "w" || key=='W':
+def moveArm(key):
+	if key == "w" or key=='W':
 		#Move upwards
 		GPIO.output(portNum, 1)
 		print("Moving Arm Forwards")
-	elif key  == 's' || key == 'S':
+	elif key  == 's' or key == 'S':
 		# Move backwards
 		GPIO.output(portNum, 0)
 		print("Moving Arm Backwards")
