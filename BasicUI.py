@@ -4,8 +4,8 @@ from tkinter import *
 import pygame
 
 # constants
-servoNum = 24
-LEDNum = 25
+elbowNum = 24
+grabberNum = 12
 controlTypes = {'Keyboard', 'Controller'}
 
 # global variables
@@ -21,10 +21,12 @@ toggleHoldVar = IntVar(root)
 # setup GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-GPIO.setup(servoNum, GPIO.OUT)
-GPIO.setup(LEDNum, GPIO.OUT)
-p=GPIO.PWM(servoNum, 50)
-p.start(7.5)
+GPIO.setup(elbowNum, GPIO.OUT)
+GPIO.setup(grabberNum, GPIO.OUT)
+elbowPWM = GPIO.PWM(elbowNum, 50)
+grabberPWM = GPIO.PWM(grabberNum, 50)
+elbowPWM.start(7.5)
+grabberPWM.start(2.5)
 # Second number above is the refresh rate for the servo (in Hz)
 
 
@@ -99,35 +101,36 @@ def elbowUpPressed(toggleHoldVar):
     print('elbow up pressed')
     global currentPos
     if toggleHoldVar.get():
-        while currentPos>2.5:
+        while currentPos > 2.5:
             currentPos = currentPos - 0.5
-            p.ChangeDutyCycle(currentPos)
-            print("toggleHoldVar, currentPos = ", currentPos)
+            elbowPWM.ChangeDutyCycle(currentPos)
+            print("toggleHoldVar, currentPos =", currentPos)
             time.sleep(0.1)
     else:
         currentPos = max(currentPos - 0.5, 2.5)
-        p.ChangeDutyCycle(currentPos)
-        print("currentPos = ", currentPos)
+        elbowPWM.ChangeDutyCycle(currentPos)
+        print("currentPos =", currentPos)
 
 def elbowDownPressed(toggleHoldVar):
     print('elbow down pressed')
     global currentPos
     if toggleHoldVar.get():
-        while currentPos<12.5:
+        while currentPos < 12.5:
             currentPos = currentPos + 0.5
-            p.ChangeDutyCycle(currentPos)
-            print("toggleHoldVar, currentPos = ", currentPos)
+            elbowPWM.ChangeDutyCycle(currentPos)
+            print("toggleHoldVar, currentPos =", currentPos)
             time.sleep(0.1)
     else:
         currentPos = min(12.5, currentPos + 0.5)
-        p.ChangeDutyCycle(currentPos)
-        print("currentPos = ",currentPos) 
+        elbowPWM.ChangeDutyCycle(currentPos)
+        print("currentPos =", currentPos) 
 
 def grabberPressed():
     global grabberIsOn
     grabberIsOn ^= 1
     print('grabber pressed: ' + str(grabberIsOn))
-    GPIO.output(LEDNum, grabberIsOn)
+    grabberValues = [2.5, 5.5]
+    grabberPWM.ChangeDutyCycle(grabberValues[grabberIsOn])
 
 def setupUI():
     global controls
