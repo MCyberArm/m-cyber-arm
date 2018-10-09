@@ -89,11 +89,11 @@ def setupUI():
     app.configure(background = 'gray')
 
     # title label
-    title = Label(app, text = 'M Cyber Arm UI', width = 30, font = '-weight bold')
-    title.grid(row = 0, column = 0, columnspan = 3)
+    title = Label(app, text = 'M Cyber Arm UI', font = '-weight bold')
+    title.grid(row = 0, column = 0, columnspan = 8)
 
     # control type dropdown menu
-    controlVar.set('Keyboard/Mouse')
+    controlVar.set('Keyboard')
     controlMenu = OptionMenu(app, controlVar, *controlTypes, command = controlMenuChoose)
     controlMenu.config(width = 20, height = 4, font = '-weight bold')
     controlMenu.grid(row = 1, column = 0, columnspan = 3)
@@ -111,7 +111,26 @@ def setupUI():
 
     grabberButton = Button(app, font = '-weight bold', text = 'Grab', command = grabberPressed, width = 16, height = 4)
     grabberButton.grid(row = 5, column = 0, columnspan = 3)
-    
+
+    # tutorial text box
+    tutorialText = 'Tutorial\n\
+        This UI provides a panel to both control the \n\
+        arm and configure its settings. To begin select\n\
+        from the top dropdown to set the control for\n\
+        Arm movement to either Keyboard or Controller.\n\
+        Below you can see the control mappings for each\n\
+        configuration.\n\n\
+        Controller:\n\
+        Y - Up\n\
+        A - Down\n\
+        X - Toggle Grab\n\n\
+        Keyboard:\n\
+        Arrow Key Up - Up\n\
+        Arrow Key Down - Down\n\
+        Space - Toggle Grab'
+    tutorial = Label(app, text = tutorialText, font = '-weight bold')
+    tutorial.grid(row = 1, column = 3, columnspan = 5, rowspan = 4)
+
     # keyboard events
     app.bind('<Up>', arrowUp) 
     app.bind('<Down>', arrowDown)
