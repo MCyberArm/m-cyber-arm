@@ -1,11 +1,12 @@
 import time
 import RPi.GPIO as GPIO
 from tkinter import *
+import pygame
 
 # constants
 servoNum = 24
 LEDNum = 25
-controlTypes = {'Keyboard/Mouse', 'Controller'}
+controlTypes = {'Keyboard', 'Controller'}
 
 # global variables
 grabberIsOn = 0
@@ -23,6 +24,7 @@ GPIO.setup(LEDNum, GPIO.OUT)
 p=GPIO.PWM(servoNum, 50)
 p.start(7.5)
 # Second number above is the refresh rate for the servo (in Hz)
+
 
 # functions
 def setupGPIO():
@@ -137,20 +139,54 @@ def setupUI():
     app.bind('<space>', spacebarPressed)
     app.focus()
 
-    root.mainloop()
+    #root.mainloop()
+
+    return app
 
 def main():
     setupGPIO()
     try:
-        setupUI()
+        app = setupUI()
+        pygame.init()
+        pygame.joystick.init()
+
+        # main loop
+        while True:
+            app.update()
+            
+            for event in pygame.event.get():
+                if event.type == pygame.JOYBUTTONDOWN:
+                    print('button pressed')
+
+            count = pygame.joystick.get_count()
+
+            if count == 1:
+                # controller is detected
+                controller = pygame.joystick.Joystick(0)
+                controller.init()
+
+                armUpButton = controller.get_button(0)      # default: A (0)
+                armDownButton = controller.get_button(3)    # default: Y (3)
+                grabberButton = controller.get_button(2)    # default: X (2)                
+                
+                if armUpButton == 1:
+                    elbowUpPressed(toggleHoldVar)
+                elif armDownButton == 1:
+                    elbowDownPressed(toggleHoldVar)
+                if grabberButton == 1:
+                    grabberPressed()
+            time.sleep(0.2)
+
     except KeyboardInterrupt:
         GPIO.output(LEDNum, 0)
         p.stop()
         GPIO.cleanup()
+        pygame.quit()
 
     GPIO.output(LEDNum, 0)
     p.stop()
     GPIO.cleanup()
+    pygame.quit()
 
 if __name__ == '__main__':
     main()
