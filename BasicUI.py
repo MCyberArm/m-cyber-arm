@@ -10,13 +10,15 @@ controlTypes = {'Keyboard/Mouse', 'Controller'}
 # global variables
 grabberIsOn = 0
 currentPos = 7.5
-
+controls = {}
+controls['k'] = {}
+controls['c'] = {}
 root = Tk()
 controlVar = StringVar(root)
 toggleHoldVar = IntVar(root)
 
 # setup GPIO
-GPIO.setmode(GPIO.BCM)
+#GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(servoNum, GPIO.OUT)
 GPIO.setup(LEDNum, GPIO.OUT)
@@ -25,6 +27,48 @@ p.start(7.5)
 # Second number above is the refresh rate for the servo (in Hz)
 
 # functions
+def loadCFG():
+    CFGPath = "config.txt"
+    try:
+        with open(CFGPath, 'r') as f:
+            lines = f.readlines()
+            for lne in lines:
+                ctrls = lne.split();
+                if len(ctrls) != 3 or (ctrls[0] != 'k' and ctrls[0] != 'c'):
+                    
+                    print("ERROR! Invalid config")
+                    exit(1)
+                controls[ctrls[0]][ctrls[1]] = ctrls[2]
+                print("controls[",ctrls[0],"][",ctrls[1], "] = ", ctrls[2])
+
+
+    except IOError as e:
+        print("Couldn't find config file. Using default config instead. Error code: (%s)." % e)
+        controls['k']['S1D'] = '<Up>';
+        controls['k']['S1U'] = '<Down>';
+        controls['k']['S2T'] = '<space>';
+        controls['c']['S1D'] = '<a>';
+        controls['c']['S1U'] = '<y>';
+        controls['c']['S2T'] = '<x>';
+    return controls
+
+def writeCFG():
+    print("Editing config")
+    print("Press to move servo 1 down, or press ENTER to keep existing keybind:")
+    # read input here
+    print("Press to move servo 1 up, or press ENTER to keep existing keybind:")
+    # read input here
+    print("Press button to toggle clamp, or press ENTER to keep existing keybind:")
+    # read input here
+
+    #open file
+    with open("CFG", w) as f:
+        for keyVal, ctrlType in controls.items():
+            for fnctn, keybind in ctrlType.items():
+                write(ctrlType, " ", fnctn, keybind)
+
+
+
 def setupGPIO():
     print("Proper Initialization will go here")
     # Above number is amount to change by?? (Double Check)
@@ -32,18 +76,21 @@ def setupGPIO():
 def controlMenuChoose(*args):
     print('chose control type ' + args[0])
 
-def arrowUp(event):
+def S1U(event):
     holdVar = IntVar()
     holdVar.set(False)
     elbowUpPressed(holdVar)
 
-def arrowDown(event):
+def S1D(event):
     holdVar = IntVar()
     holdVar.set(False)
     elbowDownPressed(holdVar)
 
-def spacebarPressed(event):
+def S2T(event):
     grabberPressed()
+
+def remapEvent(event):
+    writeCFG()
 
 def elbowUpPressed(toggleHoldVar):
     print('elbow up pressed')
@@ -79,7 +126,7 @@ def grabberPressed():
     print('grabber pressed: ' + str(grabberIsOn))
     GPIO.output(LEDNum, grabberIsOn)
 
-def setupUI():
+def setupUI(controls):
     # make window
     root.title('M Cyber Arm UI')
     
@@ -125,24 +172,26 @@ def setupUI():
         A - Down\n\
         X - Toggle Grab\n\n\
         Keyboard:\n\
-        Arrow Key Up - Up\n\
-        Arrow Key Down - Down\n\
-        Space - Toggle Grab'
+        ', controls['k']['S1U'], ' - Up\n\
+        ', controls['k']['S1D'], ' - Down\n\
+        ', controls['k']['S2T'],' - Toggle Grab'
     tutorial = Label(app, text = tutorialText, font = '-weight bold')
     tutorial.grid(row = 1, column = 3, columnspan = 5, rowspan = 4)
 
     # keyboard events
-    app.bind('<Up>', arrowUp) 
-    app.bind('<Down>', arrowDown)
-    app.bind('<space>', spacebarPressed)
+    app.bind(controls['k']['S1U'], S1U) 
+    app.bind(controls['k']['S1D'], S1D)
+    app.bind(controls['k']['S2T'], S2T)
+    #app.bind("<Tab>", remapEvent)
     app.focus()
 
     root.mainloop()
 
 def main():
+    loadCFG()
     setupGPIO()
     try:
-        setupUI()
+        setupUI(controls)
     except KeyboardInterrupt:
         GPIO.output(LEDNum, 0)
         p.stop()

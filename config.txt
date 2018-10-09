@@ -1,0 +1,6 @@
+k S1D <Up>
+k S1U <Down>
+k S2T <space>
+c S1D <a>
+c S1U <y>
+c S2T <x>
