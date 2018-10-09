@@ -32,6 +32,19 @@ def setupGPIO():
 def controlMenuChoose(*args):
     print('chose control type ' + args[0])
 
+def arrowUp(event):
+    holdVar = IntVar()
+    holdVar.set(False)
+    elbowUpPressed(holdVar)
+
+def arrowDown(event):
+    holdVar = IntVar()
+    holdVar.set(False)
+    elbowDownPressed(holdVar)
+
+def spacebarPressed(event):
+    grabberPressed()
+
 def elbowUpPressed(toggleHoldVar):
     print('elbow up pressed')
     global currentPos
@@ -100,8 +113,10 @@ def setupUI():
     grabberButton.grid(row = 5, column = 0, columnspan = 3)
     
     # keyboard events
-    app.bind('<Up>', lambda: elbowUpPressed(toggleHoldVar)) 
-    app.bind('<Down>', lambda: elbowDownPressed(toggleHoldVar))
+    app.bind('<Up>', arrowUp) 
+    app.bind('<Down>', arrowDown)
+    app.bind('<space>', spacebarPressed)
+    app.focus()
 
     root.mainloop()
 
