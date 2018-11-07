@@ -1,0 +1,10 @@
+k grabber_toggle <space>
+k elbow_down <Up>
+k elbow_up <Down>
+k wrist_left <Left>
+k wrist_right <Right>
+c grabber_toggle <x>
+c elbow_down <a>
+c elbow_up <y>
+c wrist_left <2>
+c wrist_right <7>
