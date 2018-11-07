@@ -9,11 +9,11 @@ main.py
 
 from arm import Arm
 import constants
+from main_ui import init_main_ui
 
 def main():
 	# initialize arm object
 	arm = Arm()
-
 
 
 if __name__ == '__main__':

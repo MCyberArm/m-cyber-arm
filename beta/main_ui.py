@@ -5,13 +5,18 @@ The main UI the user will be interacting with
 """
 
 import constants
+from constants import ServoName
+from constants import ServoCommand
+from constants import ControlType
+from arm import Arm
+from joint import Joint
 
-def init_main_ui(controls):
+def init_main_ui(arm):
     # make window
-    root.title('MCyber Arm UI')
+    arm.root.title('MCyber Arm UI')
     
     # make frame
-    app = Frame(root)
+    app = Frame(arm.root)
     app.grid()
     app.configure(background = 'gray')
 
@@ -21,33 +26,25 @@ def init_main_ui(controls):
 
     # control type dropdown menu
     controlVar.set('Keyboard')
-    controlMenu = OptionMenu(app, controlVar, *constants.CONTROL_TYPES, command = controlMenuChoose)
+    # TODO: remove CONTROL_TYPES and replace with enum, fix controlVar and this OptionMenu
+    controlMenu = OptionMenu(app, controlVar, *constants.CONTROL_TYPES, command = controlMenuChoose)        # TODO: make controlMenuChoose function
     controlMenu.config(width = 20, height = 4, font = '-weight bold')
     controlMenu.grid(row = 1, column = 0, columnspan = 3)
 
     # checkbox for whether to hold directional button for input
+    # TODO: fix toggleHoldVar
     toggleHoldCheckbox = Checkbutton(app, font = '-weight bold', text = 'Toggle Button Holding', variable = toggleHoldVar, width = 20, height = 4)
     toggleHoldCheckbox.grid(row = 2, column = 0, columnspan = 3)
 
     # buttons for arm movement
-    elbowUpButton = Button(app, font = '-weight bold', text = 'Elbow Up', command = lambda: elbowUpPressed(toggleHoldVar), width = 16, height = 4)
-    elbowUpButton.grid(row = 3, column = 3, columnspan = 3)
-
-    wristLeftButton = Button(app, font = '-weight bold', text = 'Wrist Left', command = lambda: WristLeftPressed(toggleHoldVar), width = 16, height = 4)
-    wristLeftButton.grid(row = 4, column = 0, columnspan = 3)
-    
-    grabberButton = Button(app, font = '-weight bold', text = 'Grab', command = grabberPressed, width = 16, height = 4)
-    grabberButton.grid(row = 4, column = 0, columnspan = 3)
-    
-    wristRightButton = Button(app, font = '-weight bold', text = 'Wrist Right', command = lambda: WristRightPressed(toggleHoldVar), width = 16, height = 4)
-    wristRightButton.grid(row = 4, column = 3, columnspan = 3)
-
-    elbowDownButton = Button(app, font = '-weight bold', text = 'Elbow Down', command = lambda: elbowDownPressed(toggleHoldVar), width = 16, height = 4)
-    elbowDownButton.grid(row = 5, column = 0, columnspan = 3)
-
-
+    arm.joints[ServoName.ELBOW].setup_ui_button(command_type = ServoCommand.UP, text = 'Elbow Up', row = 3, column = 3)
+    arm.joints[ServoName.WRIST].setup_ui_button(command_type = ServoCommand.UP, text = 'Wrist Left', row = 4, column = 0)
+    arm.joints[ServoName.GRABBER].setup_ui_button(command_type = ServoCommand.TOGGLE, text = 'Grab', row = 4, column = 3)
+    arm.joints[ServoName.WRIST].setup_ui_button(command_type = ServoCommand.DOWN, text = 'Wrist Right', row = 4, column = 6)
+    arm.joints[ServoName.ELBOW].setup_ui_button(command_type = ServoCommand.DOWN, text = 'Elbow Down', row = 5, column = 3)
 
     # tutorial text box
+    # TODO: have tutorial text display all controls (include custom xbox controller controls)
     tutorialText = 'Tutorial\n\
         This UI provides a panel to both control the \n\
         arm and configure its settings. To begin select\n\
@@ -60,17 +57,22 @@ def init_main_ui(controls):
         A - Down\n\
         X - Toggle Grab\n\n\
         Keyboard:\n\
-        ', controls['k']['S1U'], ' - Up\n\
-        ', controls['k']['S1D'], ' - Down\n\
-        ', controls['k']['S2T'],' - Toggle Grab'
+        ', arm.controls['k']['elbow_down'], ' - Up\n\
+        ', arm.controls['k']['elbow_up'], ' - Down\n\
+        ', arm.controls['k']['grabber_toggle'],' - Toggle Grab'
     tutorial = Label(app, text = tutorialText, font = '-weight bold')
     tutorial.grid(row = 1, column = 3, columnspan = 5, rowspan = 4)
 
     # keyboard events
-    app.bind(controls['k']['S1U'], S1U) 
-    app.bind(controls['k']['S1D'], S1D)
-    app.bind(controls['k']['S2T'], S2T)
-    app.bind("<Tab>", remapEvent)
+    # TODO
+    arm.joints[ServoName.GRABBER].keyboard_bindings(app = app)
+    
+    # app.bind(controls['k']['S1U'], S1U)
+    # app.bind(controls['k']['S1D'], S1D)
+    # app.bind(controls['k']['S2T'], S2T)
+    
+    app.bind("<Tab>", remapEvent)       # TODO: make function to handle this
+    
     app.focus()
 
     return app

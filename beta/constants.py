@@ -4,30 +4,45 @@ constants.py
 Lists all constants used by this project
 """
 
+from enum import Enum
+
+
 # servo GPIO pin numbers on the Raspberry Pi
 GPIO_GRABBER = 12
 GPIO_WRIST = -1			# TODO: assign GPIO pin
 GPIO_ELBOW = 24
 
-# controls
-CONTROLS_CONFIG_PATH = "controls_config.txt"
-NUM_CONTROLS = 10		# number of controls specified in controls config file
-CONTROLS_DEFAULT_CONFIG = {
-	'k': {
-		'grabber_toggle': '<space>',
-		'elbow_down': '<Up>',
-		'elbow_up': '<Down>'
-		'wrist_left': '<Left>',
-		'wrist_right': '<Right>'
-	}, 'c': {
-		'grabber_toggle': '<x>',
-		'elbow_down': '<a>',
-		'elbow_up': '<y>',
-		'wrist_left': '<2>',	# TODO: temporarily left and right bumpers on controller
-		'wrist_right': '<7>'
-	}
-}
-CONTROL_TYPES = {'Keyboard', 'Controller'}
 
 # servos
 SERVO_HERTZ = 50
+
+class ServoName(Enum):
+	GRABBER = 'grabber'
+	ELBOW = 'elbow'
+	WRIST = 'wrist'
+
+class ServoCommand(Enum):
+	UP = 'up'
+	DOWN = 'down'
+	TOGGLE = 'toggle'
+
+class ControlType(Enum):
+	KEYBOARD = 'keyboard'
+	CONTROLLER = 'controller'
+
+
+# controls
+CONTROLS_CONFIG_PATH = 'controls_config.txt'
+NUM_CONTROLS = 10		# number of controls specified in controls config file
+CONTROLS_DEFAULT_CONFIG = {
+	ControlType.KEYBOARD: {
+		ServoName.GRABBER: {ServoCommand.TOGGLE: '<space>'},
+		ServoName.ELBOW: {ServoCommand.UP: '<Up>', ServoCommand.DOWN: '<Down>'},
+		ServoName.WRIST: {ServoCommand.UP: '<Left>', ServoCommand.DOWN: '<Right>'}
+	}, ControlType.CONTROLLER: {
+		ServoName.GRABBER: {ServoCommand.TOGGLE: '<x>'},
+		ServoName.ELBOW: {ServoCommand.UP: '<a>', ServoCommand.DOWN: '<y>'},
+		ServoName.WRIST: {ServoCommand.UP: '<2>', ServoCommand.DOWN: '<7>'}			# TODO: temporarily left and right bumpers on controller
+	}
+}
+CONTROL_TYPES = {'Keyboard', 'Controller'}
