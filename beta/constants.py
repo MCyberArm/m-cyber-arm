@@ -15,6 +15,9 @@ GPIO_ELBOW = 24
 
 # servos
 SERVO_HERTZ = 50
+SERVO_POS_MIN = 2.5
+SERVO_POS_MAX = 12.5
+SERVO_POS_DELTA = 0.5
 
 class ServoName(Enum):
 	GRABBER = 'grabber'
@@ -45,4 +48,4 @@ CONTROLS_DEFAULT_CONFIG = {
 		ServoName.WRIST: {ServoCommand.UP: '<2>', ServoCommand.DOWN: '<7>'}			# TODO: temporarily left and right bumpers on controller
 	}
 }
-CONTROL_TYPES = {'Keyboard', 'Controller'}
+CONTROL_REMAP_KEY = '<Tab>'

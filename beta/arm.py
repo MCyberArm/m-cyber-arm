@@ -16,6 +16,7 @@ class Arm:
         load_control_config()
         setup_joints()
         self.root = Tk()
+        self.last_pressed_button = None
     
     def load_control_config(self):
         self.controls = constants.CONTROLS_DEFAULT_CONFIG
@@ -41,12 +42,11 @@ class Arm:
         gpio.setwarnings(False)
         
         self.joints = {
-            ServoName.GRABBER: Joint(name = ServoName.GRABBER, gpio_pin = constants.GPIO_GRABBER, init_pos = 2.5),
-            ServoName.ELBOW: Joint(name = ServoName.ELBOW, gpio_pin = constants.GPIO_ELBOW, init_pos = 7.5),
-            ServoName.WRIST: Joint(name = ServoName.WRIST, gpio_pin = constants.GPIO_WRIST, init_pos = 7.5)
+            ServoName.GRABBER: Joint(name = ServoName.GRABBER, gpio_pin = constants.GPIO_GRABBER, init_pos = 2.5, min_pos = constants.SERVO_POS_MIN, max_pos = constants.SERVO_POS_MAX, delta_pos = constants.SERVO_POS_DELTA),
+            ServoName.ELBOW: Joint(name = ServoName.ELBOW, gpio_pin = constants.GPIO_ELBOW, init_pos = 7.5, min_pos = constants.SERVO_POS_MIN, max_pos = constants.SERVO_POS_MAX, delta_pos = constants.SERVO_POS_DELTA),
+            ServoName.WRIST: Joint(name = ServoName.WRIST, gpio_pin = constants.GPIO_WRIST, init_pos = 7.5, min_pos = constants.SERVO_POS_MIN, max_pos = constants.SERVO_POS_MAX, delta_pos = constants.SERVO_POS_DELTA)
         }
         
-        # TODO
         self.joints[ServoName.GRABBER].setup_key_binds(commands_to_keys = self.controls[ControlType.KEYBOARD][ServoName.GRABBER])
         self.joints[ServoName.ELBOW].setup_key_binds(commands_to_keys = self.controls[ControlType.KEYBOARD][ServoName.ELBOW])
         self.joints[ServoName.WRIST].setup_key_binds(commands_to_keys = self.controls[ControlType.KEYBOARD][ServoName.WRIST])
