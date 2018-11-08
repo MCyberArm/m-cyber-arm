@@ -23,19 +23,22 @@ def init_main_ui(arm):
 
     # title label
     title = Label(app, text = 'MCyber Arm UI', font = '-weight bold')
-    title.grid(row = 0, column = 0, columnspan = 8)
+    title.grid(row = 0, column = 0, columnspan = 14)
 
     # control type dropdown menu
-    # controlVar.set('Keyboard')
-    # TODO: remove CONTROL_TYPES and replace with enum, fix controlVar and this OptionMenu
-    # controlMenu = OptionMenu(app, controlVar, *set(constants.ControlType), command = controlMenuChoose)        # TODO: make controlMenuChoose function
-    # controlMenu.config(width = 20, height = 4, font = '-weight bold')
-    # controlMenu.grid(row = 1, column = 0, columnspan = 3)
+    arm.curr_control_type.set('Keyboard')
+    control_type_set = {control_type.value for control_type in constants.ControlType}
+    controlMenu = OptionMenu(app, arm.curr_control_type, *control_type_set, command = lambda choice: print('selected', choice))
+    controlMenu.config(width = 20, height = 4, font = '-weight bold')
+    controlMenu.grid(row = 1, column = 0, columnspan = 4)
+    
+    # checkbox for whether to lock the arm in place
+    toggle_lock_checkbox = Checkbutton(app, font = '-weight bold', text = 'Toggle Arm Lock', variable = arm.locked, width = 20, height = 4)
+    toggle_lock_checkbox.grid(row = 2, column = 0, columnspan = 4)
 
     # checkbox for whether to hold directional button for input
-    # TODO: fix toggleHoldVar
-    # toggleHoldCheckbox = Checkbutton(app, font = '-weight bold', text = 'Toggle Button Holding', variable = toggleHoldVar, width = 20, height = 4)
-    # toggleHoldCheckbox.grid(row = 2, column = 0, columnspan = 3)
+    # toggle_hold_checkbox = Checkbutton(app, font = '-weight bold', text = 'Toggle Button Holding', variable = TODO, width = 20, height = 4)
+    # toggle_hold_checkbox.grid(row = 2, column = 5, columnspan = 4)
 
     # buttons for arm movement
     arm.joints[ServoName.ELBOW].setup_ui_button(app, command_type = ServoCommand.UP, text = 'Elbow Up', row = 3, column = 3)

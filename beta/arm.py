@@ -14,10 +14,15 @@ from joint import Joint
 
 class Arm:
     def __init__(self):
+        self.root = Tk()
+        self.curr_control_type = StringVar(self.root)
+        self.locked = BooleanVar(self.root)
+        
         self.load_control_config()
         self.setup_joints()
-        self.root = Tk()
-        self.last_pressed_button = None
+        
+        # TODO: handle last pressed button sane as for curr_control_type and locked
+        # self.last_pressed_button = StringVar(self.root)
     
     def load_control_config(self):
         self.controls = constants.CONTROLS_DEFAULT_CONFIG
@@ -34,8 +39,8 @@ class Arm:
                     # format: [control_type] [servo_name] [servo_command] [control]
                     self.controls[ControlType(ctrls[0])][ServoName(ctrls[1])][ServoCommand(ctrls[2])] = ctrls[3]
         except IOError as e:
-            print("ERROR: invalid config")
-            print("Using default config instead. Error code: (%s)." % e)
+            print('ERROR: invalid config')
+            print('Using default config instead')
             self.controls = constants.CONTROLS_DEFAULT_CONFIG
     
     def setup_joints(self):
@@ -43,12 +48,11 @@ class Arm:
         # gpio.setwarnings(False)
         
         self.joints = {
-            ServoName.GRABBER: Joint(name = ServoName.GRABBER.value, gpio_pin = constants.GPIO_GRABBER, init_pos = 2.5, min_pos = constants.SERVO_POS_MIN, max_pos = constants.SERVO_POS_MAX, delta_pos = constants.SERVO_POS_DELTA),
-            ServoName.ELBOW: Joint(name = ServoName.ELBOW.value, gpio_pin = constants.GPIO_ELBOW, init_pos = 7.5, min_pos = constants.SERVO_POS_MIN, max_pos = constants.SERVO_POS_MAX, delta_pos = constants.SERVO_POS_DELTA),
-            ServoName.WRIST: Joint(name = ServoName.WRIST.value, gpio_pin = constants.GPIO_WRIST, init_pos = 7.5, min_pos = constants.SERVO_POS_MIN, max_pos = constants.SERVO_POS_MAX, delta_pos = constants.SERVO_POS_DELTA)
+            ServoName.GRABBER: Joint(ServoName.GRABBER.value, constants.GPIO_GRABBER, 2.5, constants.SERVO_POS_MIN, constants.SERVO_POS_MAX, constants.SERVO_POS_DELTA, self.curr_control_type, self.locked),
+            ServoName.ELBOW: Joint(ServoName.ELBOW.value, constants.GPIO_ELBOW, 7.5, constants.SERVO_POS_MIN, constants.SERVO_POS_MAX, constants.SERVO_POS_DELTA, self.curr_control_type, self.locked),
+            ServoName.WRIST: Joint(ServoName.WRIST.value, constants.GPIO_WRIST, 7.5, constants.SERVO_POS_MIN, constants.SERVO_POS_MAX, constants.SERVO_POS_DELTA, self.curr_control_type, self.locked)
         }
         
         self.joints[ServoName.GRABBER].setup_key_binds(commands_to_keys = self.controls[ControlType.KEYBOARD][ServoName.GRABBER])
         self.joints[ServoName.ELBOW].setup_key_binds(commands_to_keys = self.controls[ControlType.KEYBOARD][ServoName.ELBOW])
         self.joints[ServoName.WRIST].setup_key_binds(commands_to_keys = self.controls[ControlType.KEYBOARD][ServoName.WRIST])
-

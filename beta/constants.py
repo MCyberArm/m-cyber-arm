@@ -30,8 +30,8 @@ class ServoCommand(Enum):
 	TOGGLE = 'toggle'
 
 class ControlType(Enum):
-	KEYBOARD = 'keyboard'
-	CONTROLLER = 'controller'
+	KEYBOARD = 'Keyboard'
+	CONTROLLER = 'Controller'
 
 
 # controls

@@ -9,14 +9,11 @@ from tkinter import *
 import constants
 from constants import ServoName
 from constants import ServoCommand
+from constants import ControlType
 
 class Joint:
-    def __init__(self, name, gpio_pin, init_pos, min_pos, max_pos, delta_pos):
+    def __init__(self, name, gpio_pin, init_pos, min_pos, max_pos, delta_pos, curr_control_type, locked):
         self.name = name
-        
-        # gpio.setup(gpio_pin, gpio.OUT)
-        # self.pwm = gpio.PWM(gpio_pin, constants.SERVO_HERTZ)
-        # self.pwm.start(init_pos)
         
         self.gpio_pin = gpio_pin
         self.pos = init_pos
@@ -24,11 +21,15 @@ class Joint:
         self.max_pos = max_pos
         self.delta_pos = delta_pos
         
-        self.locked = False
-        self.held = False
+        self.curr_control_type = curr_control_type
+        self.locked = locked
+        
+        # gpio.setup(gpio_pin, gpio.OUT)
+        # self.pwm = gpio.PWM(gpio_pin, constants.SERVO_HERTZ)
+        # self.pwm.start(init_pos)
     
     def setup_ui_button(self, app, command_type, text, row, column):
-        self.button = Button(app, font = '-weight bold', text = text, command = lambda: self.move(command_type), width = 16, height = 4)
+        self.button = Button(app, font = '-weight bold', text = text, command = lambda: self.move(None, command_type), width = 16, height = 4)
         self.button.grid(row = row, column = column, columnspan = 3)
     
     # def setup_remap_ui_button(self, app, command_type, text, row, column):
@@ -42,14 +43,22 @@ class Joint:
     
     def bind_keys(self, app):
         for servo_command, key in self.controls.items():
-            app.bind(key, lambda e: move(servo_command))
+            # TODO: fix keyboard button press --> currently up and down arrows both move it in same direction
+            print(self.name + ': bind', key, 'to', servo_command.value)
+            app.bind(key, lambda e: self.move(ControlType.KEYBOARD, servo_command))
     
-    def move(self, command):
-        if self.locked:
-            print(self.name, ': locked')
+    def move(self, control_type, command):
+        if control_type != None and control_type.value != self.curr_control_type.get():
+            print(self.name + ': ' + control_type.value + ' is locked')
             return
         
-        # TODO: handle when held is set to true
+        if self.locked.get():
+            print(self.name, 'is locked')
+            return
+        
+        # TODO: add feature for button holding (gradual change in movement automatically)
+        
+        print('command:', command.value)
         
         if command == ServoCommand.UP:
             self.pos = max(self.pos - self.delta_pos, self.min_pos)
