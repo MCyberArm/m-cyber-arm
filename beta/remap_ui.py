@@ -4,6 +4,8 @@ remap_ui.py
 The UI allowing the user to change control bindings
 """
 
+from tkinter import *
+
 def init_remap_ui(arm):
     # make window
     root.title('M Cyber Arm Key Remapping UI')

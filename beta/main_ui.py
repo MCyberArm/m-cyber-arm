@@ -4,6 +4,7 @@ main_ui.py
 The main UI the user will be interacting with
 """
 
+from tkinter import *
 import constants
 from constants import ServoName
 from constants import ServoCommand
@@ -25,11 +26,11 @@ def init_main_ui(arm):
     title.grid(row = 0, column = 0, columnspan = 8)
 
     # control type dropdown menu
-    controlVar.set('Keyboard')
+    # controlVar.set('Keyboard')
     # TODO: remove CONTROL_TYPES and replace with enum, fix controlVar and this OptionMenu
-    controlMenu = OptionMenu(app, controlVar, *set(constants.ControlType), command = controlMenuChoose)        # TODO: make controlMenuChoose function
-    controlMenu.config(width = 20, height = 4, font = '-weight bold')
-    controlMenu.grid(row = 1, column = 0, columnspan = 3)
+    # controlMenu = OptionMenu(app, controlVar, *set(constants.ControlType), command = controlMenuChoose)        # TODO: make controlMenuChoose function
+    # controlMenu.config(width = 20, height = 4, font = '-weight bold')
+    # controlMenu.grid(row = 1, column = 0, columnspan = 3)
 
     # checkbox for whether to hold directional button for input
     # TODO: fix toggleHoldVar
@@ -56,19 +57,19 @@ def init_main_ui(arm):
         Y - Up\n\
         A - Down\n\
         X - Toggle Grab\n\n\
-        Keyboard:\n\
-        ', ServoName.ELBOW, ' ', ServoCommand.UP, ' - ', arm.controls[ControlType.KEYBOARD][ServoName.ELBOW][ServoCommand.UP], '\n\
-        ', ServoName.ELBOW, ' ', ServoCommand.DOWN, ' - ', arm.controls[ControlType.KEYBOARD][ServoName.ELBOW][ServoCommand.DOWN], '\n\
-        ', ServoName.WRIST, ' ', ServoCommand.UP, ' - ', arm.controls[ControlType.KEYBOARD][ServoName.WRIST][ServoCommand.UP], '\n\
-        ', ServoName.WRIST, ' ', ServoCommand.DOWN, ' - ', arm.controls[ControlType.KEYBOARD][ServoName.WRIST][ServoCommand.DOWN], '\n\
-        ', ServoName.GRABBER, ' ', ServoCommand.TOGGLE, ' - ', arm.controls[ControlType.KEYBOARD][ServoName.GRABBER][ServoCommand.TOGGLE]
+        Keyboard:\n'\
+        + ServoName.ELBOW.value + ' ' + ServoCommand.UP.value + ' - ' + arm.controls[ControlType.KEYBOARD][ServoName.ELBOW][ServoCommand.UP] + '\n'\
+        + ServoName.ELBOW.value + ' ' + ServoCommand.DOWN.value + ' - ' + arm.controls[ControlType.KEYBOARD][ServoName.ELBOW][ServoCommand.DOWN] + '\n'\
+        + ServoName.WRIST.value + ' ' + ServoCommand.UP.value + ' - ' + arm.controls[ControlType.KEYBOARD][ServoName.WRIST][ServoCommand.UP] + '\n'\
+        + ServoName.WRIST.value + ' ' + ServoCommand.DOWN.value + ' - ' + arm.controls[ControlType.KEYBOARD][ServoName.WRIST][ServoCommand.DOWN] + '\n'\
+        + ServoName.GRABBER.value + ' ' + ServoCommand.TOGGLE.value + ' - ' + arm.controls[ControlType.KEYBOARD][ServoName.GRABBER][ServoCommand.TOGGLE]
     tutorial = Label(app, text = tutorialText, font = '-weight bold')
-    tutorial.grid(row = 1, column = 3, columnspan = 5, rowspan = 4)
+    tutorial.grid(row = 1, column = 9, columnspan = 5, rowspan = 4)
 
     # keyboard events
-    arm.joints[ServoName.GRABBER].keyboard_bindings(app)
-    arm.joints[ServoName.ELBOW].keyboard_bindings(app)
-    arm.joints[ServoName.WRIST].keyboard_bindings(app)
+    arm.joints[ServoName.GRABBER].bind_keys(app)
+    arm.joints[ServoName.ELBOW].bind_keys(app)
+    arm.joints[ServoName.WRIST].bind_keys(app)
     
     # app.bind(constants.CONTROL_REMAP_KEY, remapEvent)       # TODO: make function to handle this
     
