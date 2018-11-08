@@ -5,6 +5,7 @@ The primary class that represents the arm's servos and any connected GUIs
 """
 
 # import RPi.GPIO as gpio
+# import pygame
 from tkinter import *
 import constants
 from constants import ServoName
@@ -53,6 +54,32 @@ class Arm:
             ServoName.WRIST: Joint(ServoName.WRIST.value, constants.GPIO_WRIST, 7.5, constants.SERVO_POS_MIN, constants.SERVO_POS_MAX, constants.SERVO_POS_DELTA, self.curr_control_type, self.locked)
         }
         
+        # TODO: make this into a for loop iterating over each joint
         self.joints[ServoName.GRABBER].setup_key_binds(commands_to_keys = self.controls[ControlType.KEYBOARD][ServoName.GRABBER])
         self.joints[ServoName.ELBOW].setup_key_binds(commands_to_keys = self.controls[ControlType.KEYBOARD][ServoName.ELBOW])
         self.joints[ServoName.WRIST].setup_key_binds(commands_to_keys = self.controls[ControlType.KEYBOARD][ServoName.WRIST])
+        
+        self.joints[ServoName.GRABBER].setup_controller_binds(commands_to_buttons = self.controls[ControlType.CONTROLLER][ServoName.GRABBER])
+        self.joints[ServoName.ELBOW].setup_controller_binds(commands_to_buttons = self.controls[ControlType.CONTROLLER][ServoName.ELBOW])
+        self.joints[ServoName.WRIST].setup_controller_binds(commands_to_buttons = self.controls[ControlType.CONTROLLER][ServoName.WRIST])
+
+    def handle_joystick(self):
+        count = 1   # TEMP  
+        # count = pygame.joystick.get_count()
+        # if count == 1:
+        #     # controller is detected
+        #     controller = pygame.joystick.Joystick(0)
+        #     controller.init()
+
+        #     # only allows for one button to be pressed at a time
+        #     button_pressed = False
+        #     for joint in self.joints:
+        #         if button_pressed:
+        #             break
+        #         for servo_command, button in joint.controller_controls:
+        #             if controller.get_button(constants.CONTROLS_XBOX_BINDINGS[button]) == 1:
+        #                 joint.move(ControlType.CONTROLLER, servo_command)
+        #                 button_pressed = True
+        #                 break
+            
+            

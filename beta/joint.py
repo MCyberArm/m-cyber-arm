@@ -39,10 +39,13 @@ class Joint:
         # elbowUpButton.grid(row = 3, column = 0, columnspan = 3)
 
     def setup_key_binds(self, commands_to_keys):
-        self.controls = commands_to_keys
+        self.keyboard_controls = commands_to_keys
+    
+    def setup_controller_binds(self, commands_to_buttons):
+        self.controller_controls = commands_to_buttons
     
     def bind_keys(self, app):
-        for servo_command, key in self.controls.items():
+        for servo_command, key in self.keyboard_controls.items():
             # TODO: fix keyboard button press --> currently up and down arrows both move it in same direction
             print(self.name + ': bind', key, 'to', servo_command.value)
             app.bind(key, lambda e: self.move(ControlType.KEYBOARD, servo_command))

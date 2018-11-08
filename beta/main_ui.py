@@ -48,24 +48,15 @@ def init_main_ui(arm):
     arm.joints[ServoName.ELBOW].setup_ui_button(app, command_type = ServoCommand.DOWN, text = 'Elbow Down', row = 5, column = 3)
 
     # tutorial text box
-    # TODO: have tutorial text display all controls (include custom xbox controller controls) (make new function)
     tutorialText = 'Tutorial\n\
         This UI provides a panel to both control the \n\
         arm and configure its settings. To begin select\n\
         from the top dropdown to set the control for\n\
         Arm movement to either Keyboard or Controller.\n\
         Below you can see the control mappings for each\n\
-        configuration.\n\n\
-        Controller:\n\
-        Y - Up\n\
-        A - Down\n\
-        X - Toggle Grab\n\n\
-        Keyboard:\n'\
-        + ServoName.ELBOW.value + ' ' + ServoCommand.UP.value + ' - ' + arm.controls[ControlType.KEYBOARD][ServoName.ELBOW][ServoCommand.UP] + '\n'\
-        + ServoName.ELBOW.value + ' ' + ServoCommand.DOWN.value + ' - ' + arm.controls[ControlType.KEYBOARD][ServoName.ELBOW][ServoCommand.DOWN] + '\n'\
-        + ServoName.WRIST.value + ' ' + ServoCommand.UP.value + ' - ' + arm.controls[ControlType.KEYBOARD][ServoName.WRIST][ServoCommand.UP] + '\n'\
-        + ServoName.WRIST.value + ' ' + ServoCommand.DOWN.value + ' - ' + arm.controls[ControlType.KEYBOARD][ServoName.WRIST][ServoCommand.DOWN] + '\n'\
-        + ServoName.GRABBER.value + ' ' + ServoCommand.TOGGLE.value + ' - ' + arm.controls[ControlType.KEYBOARD][ServoName.GRABBER][ServoCommand.TOGGLE]
+        configuration.\n\n'\
+    + display_controls(arm, ControlType.CONTROLLER) + '\n' + display_controls(arm, ControlType.KEYBOARD)
+
     tutorial = Label(app, text = tutorialText, font = '-weight bold')
     tutorial.grid(row = 1, column = 9, columnspan = 5, rowspan = 4)
 
@@ -76,6 +67,20 @@ def init_main_ui(arm):
     
     # app.bind(constants.CONTROL_REMAP_KEY, remapEvent)       # TODO: make function to handle this
     
+    # arm.root.protocol('WM_DELETE_WINDOW', lambda: arm.root.destroy())
+    
+    app.bind(constants.CLOSE_WINDOW, lambda e: arm.root.destroy())
+    
     app.focus()
 
     return app
+
+def display_controls(arm, control_type):
+    output = control_type.value + ':\n'
+    
+    print(arm.controls[control_type][ServoName.GRABBER])
+    for servo_name, controls in arm.controls[control_type].items():
+        for servo_command, binding in controls.items():
+            output += servo_name.value + ' ' + servo_command.value + ' ' + binding + '\n'
+    
+    return output

@@ -6,5 +6,5 @@ Keyboard wrist down <Right>
 Controller grabber toggle <x>
 Controller elbow up <y>
 Controller elbow down <a>
-Controller wrist up <2>
-Controller wrist down <7>
+Controller wrist up <left_bumper>
+Controller wrist down <right_bumper>

@@ -15,24 +15,24 @@ from main_ui import init_main_ui
 
 
 def main():
-	# initialize arm object
-	arm = Arm()
+    # initialize arm object
+    try:
+        arm = Arm()
 
-	app = init_main_ui(arm)
-	
-	# pygame.init()
-	# pygame.joystick.init()
-	
-	quit = False
-	while not quit:
-		app.update()
-		
-		# for controller input, call a function in arm
-		# (which then looks for the joint that is responsible for the controller button press,
-		# and then calls the joint's respective move function)
-		
-		time.sleep(0.2)
-
+        app = init_main_ui(arm)
+        
+        # pygame.init()
+        # pygame.joystick.init()
+        
+        while True:
+            app.update()
+            
+            arm.handle_joystick()
+            
+            time.sleep(0.2)
+    except:
+        print('Closing application')
+        # TODO: disable pwm and GPIO things here    
 
 if __name__ == '__main__':
     main()

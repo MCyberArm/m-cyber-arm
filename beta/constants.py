@@ -45,7 +45,20 @@ CONTROLS_DEFAULT_CONFIG = {
 	}, ControlType.CONTROLLER: {
 		ServoName.GRABBER: {ServoCommand.TOGGLE: '<x>'},
 		ServoName.ELBOW: {ServoCommand.UP: '<a>', ServoCommand.DOWN: '<y>'},
-		ServoName.WRIST: {ServoCommand.UP: '<2>', ServoCommand.DOWN: '<7>'}			# TODO: temporarily left and right bumpers on controller
+		ServoName.WRIST: {ServoCommand.UP: '<left_bumper>', ServoCommand.DOWN: '<right_bumper>'}
+		# TODO: temporarily left and right bumpers on controller
 	}
 }
+
+CONTROLS_XBOX_BINDINGS = {
+	'<a>': 1,
+	'<b>': 2,
+	'<x>': 3,
+	'<y>': 4,
+	'<left_bumper>': 5,
+	'<right_bumper>': 6
+}
+
 CONTROL_REMAP_KEY = '<Tab>'
+CLOSE_WINDOW = '<Escape>'
+
