@@ -59,14 +59,22 @@ def init_remap_ui(arm):
 def get_new_key(event, arm):
     if arm.last_pressed_button_joint.get() != '':
         key_pressed = repr(event.char)
-        print('event.char', event.char)
-        print('repr(event.char)', repr(event.char))
         remap(arm, event.char)
 
 def remap(arm, new_key):
-    # TODO: get joint object from last_pressed_button_joint
-    # TODO: set joint's command last_pressed_button_command to new_key
     print('remap', arm.last_pressed_button_joint.get(), arm.last_pressed_button_command.get(), 'with', new_key)
+    # TODO: maybe have function that converts new_key to <new_key> to handle weird edge cases (if they exist)
+    # TODO: handle controller button changes
+    # TODO: handle non-letter characters (such as arrow keys)
     
+    servo_name = ServoName(arm.last_pressed_button_joint.get())
+    command = ServoCommand(arm.last_pressed_button_command.get())
+    new_key = '<' + new_key + '>'
+    
+    arm.controls[ControlType.KEYBOARD][servo_name][command] = new_key
+    curr_text = arm.joints[servo_name].remap_ui_button_texts[command].get()
+    arm.joints[servo_name].remap_ui_button_texts[command].set(' '.join(curr_text.split(' ')[:-1]) + ' ' + new_key)
+    
+    # TODO: update joint's controls
     arm.last_pressed_button_joint.set('')
     arm.last_pressed_button_command.set('')

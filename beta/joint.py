@@ -27,6 +27,8 @@ class Joint:
         self.last_pressed_button_joint = last_pressed_button_joint
         self.last_pressed_button_command = last_pressed_button_command
         
+        self.remap_ui_button_texts = {}
+        
         # gpio.setup(gpio_pin, gpio.OUT)
         # self.pwm = gpio.PWM(gpio_pin, constants.SERVO_HERTZ)
         # self.pwm.start(init_pos)
@@ -37,7 +39,11 @@ class Joint:
     
     def setup_remap_ui_button(self, app, command_type, text, row, column):
         # TODO: change text in GUI when button is pressed to indicate that it's waiting for a new key
-        self.remap_button = Button(app, font = '-weight bold', text = text, command = lambda: remap_start(self, command_type), width = 16, height = 4)
+        # self.remap_button = Button(app, font = '-weight bold', text = text, command = lambda: remap_start(self, command_type), width = 16, height = 4)
+        text_variable = StringVar()
+        text_variable.set(text)
+        self.remap_ui_button_texts[command_type] = text_variable
+        self.remap_button = Button(app, font = '-weight bold', textvariable = text_variable, command = lambda: remap_start(self, command_type), width = 16, height = 4)
         self.remap_button.grid(row = row, column = column, columnspan = 3)
 
     def setup_key_binds(self, commands_to_keys):
