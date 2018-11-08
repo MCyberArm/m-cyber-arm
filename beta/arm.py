@@ -20,6 +20,8 @@ class Arm:
         self.curr_control_type = StringVar(self.root)
         self.curr_control_type.set('Keyboard')
         
+        # TODO: have button holding variable
+        
         self.locked = BooleanVar(self.root)
         self.locked.set(False)
         
@@ -27,7 +29,8 @@ class Arm:
         self.remapping = IntVar(self.root)
         self.remapping.set(-1)
         
-        self.last_pressed_button = StringVar(self.root)
+        self.last_pressed_button_joint = StringVar(self.root)
+        self.last_pressed_button_command = StringVar(self.root)
         
         self.load_control_config()
         self.setup_joints()
@@ -56,9 +59,9 @@ class Arm:
         # gpio.setwarnings(False)
         
         self.joints = {
-            ServoName.GRABBER: Joint(ServoName.GRABBER.value, constants.GPIO_GRABBER, 2.5, constants.SERVO_POS_MIN, constants.SERVO_POS_MAX, constants.SERVO_POS_DELTA, self.curr_control_type, self.locked),
-            ServoName.ELBOW: Joint(ServoName.ELBOW.value, constants.GPIO_ELBOW, 7.5, constants.SERVO_POS_MIN, constants.SERVO_POS_MAX, constants.SERVO_POS_DELTA, self.curr_control_type, self.locked),
-            ServoName.WRIST: Joint(ServoName.WRIST.value, constants.GPIO_WRIST, 7.5, constants.SERVO_POS_MIN, constants.SERVO_POS_MAX, constants.SERVO_POS_DELTA, self.curr_control_type, self.locked)
+            ServoName.GRABBER: Joint(ServoName.GRABBER.value, constants.GPIO_GRABBER, 2.5, constants.SERVO_POS_MIN, constants.SERVO_POS_MAX, constants.SERVO_POS_DELTA, self.curr_control_type, self.locked, self.last_pressed_button_joint, self.last_pressed_button_command),
+            ServoName.ELBOW: Joint(ServoName.ELBOW.value, constants.GPIO_ELBOW, 7.5, constants.SERVO_POS_MIN, constants.SERVO_POS_MAX, constants.SERVO_POS_DELTA, self.curr_control_type, self.locked, self.last_pressed_button_joint, self.last_pressed_button_command),
+            ServoName.WRIST: Joint(ServoName.WRIST.value, constants.GPIO_WRIST, 7.5, constants.SERVO_POS_MIN, constants.SERVO_POS_MAX, constants.SERVO_POS_DELTA, self.curr_control_type, self.locked, self.last_pressed_button_joint, self.last_pressed_button_command)
         }
         
         # TODO: make this into a for loop iterating over each joint

@@ -13,8 +13,6 @@ from constants import ControlType
 from arm import Arm
 from joint import Joint
 
-# TODO: allow remapping of controller buttons
-
 def init_remap_ui(arm):
     # make window
     arm.root.title('M Cyber Arm Key Remapping UI')
@@ -27,17 +25,15 @@ def init_remap_ui(arm):
     # title label
     title = Label(app, text = 'M Cyber Arm Key Remapping UI', font = '-weight bold')
     title.grid(row = 0, column = 0, columnspan = 8)
-
-    # buttons for arm movement
-    # elbowUpButton = Button(app, font = '-weight bold', text = 'Elbow Up', command = lambda: arm.last_pressed_button.set('S1U'), width = 16, height = 4)
-    # elbowUpButton.grid(row = 3, column = 0, columnspan = 3)
-
-    # elbowDownButton = Button(app, font = '-weight bold', text = 'Elbow Down', command = lambda: arm.last_pressed_button.set('S1D'), width = 16, height = 4)
-    # elbowDownButton.grid(row = 4, column = 0, columnspan = 3)
-
-    # grabberButton = Button(app, font = '-weight bold', text = 'Grab', command = lambda: arm.last_pressed_button.set('S2T'), width = 16, height = 4)
-    # grabberButton.grid(row = 5, column = 0, columnspan = 3)
-
+    
+    # remappable buttons
+    i = 1
+    for servo_name, joint in arm.joints.items():
+        for servo_command, key in joint.keyboard_controls.items():
+            text = servo_name.value + ' ' + servo_command.value + ' ' + key
+            joint.setup_remap_ui_button(app, servo_command, text, i, 0)
+            i += 1
+    
     # tutorial text box
     tutorialText = 'Tutorial\n\
         This UI provides a panel to remap the keys used \n\
@@ -54,7 +50,23 @@ def init_remap_ui(arm):
     arm.root.protocol("WM_DELETE_WINDOW", lambda: arm.remapping.set(-1))
 
     # keyboard events
-    # app.bind("<Key>", remap_event)       # TODO: make remap_event function
+    # TODO: get it to work with controller remapping
+    app.bind("<Key>", lambda event: get_new_key(event, arm))
     app.focus()
 
     return app
+
+def get_new_key(event, arm):
+    if arm.last_pressed_button_joint.get() != '':
+        key_pressed = repr(event.char)
+        print('event.char', event.char)
+        print('repr(event.char)', repr(event.char))
+        remap(arm, event.char)
+
+def remap(arm, new_key):
+    # TODO: get joint object from last_pressed_button_joint
+    # TODO: set joint's command last_pressed_button_command to new_key
+    print('remap', arm.last_pressed_button_joint.get(), arm.last_pressed_button_command.get(), 'with', new_key)
+    
+    arm.last_pressed_button_joint.set('')
+    arm.last_pressed_button_command.set('')

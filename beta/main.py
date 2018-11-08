@@ -3,7 +3,7 @@ main.py
 
 - creates arm object
 - main loop 
-- handles gui updates
+- handles gui updates, frame switches
 - handles xbox controller input
 """
 
