@@ -9,7 +9,7 @@ from enum import Enum
 
 # servo GPIO pin numbers on the Raspberry Pi
 GPIO_GRABBER = 12
-GPIO_WRIST = -1			# TODO: assign GPIO pin
+GPIO_WRIST = -1         # TODO: assign GPIO pin
 GPIO_ELBOW = 24
 
 
@@ -20,43 +20,43 @@ SERVO_POS_MAX = 12.5
 SERVO_POS_DELTA = 0.5
 
 class ServoName(Enum):
-	GRABBER = 'grabber'
-	ELBOW = 'elbow'
-	WRIST = 'wrist'
+    GRABBER = 'grabber'
+    ELBOW = 'elbow'
+    WRIST = 'wrist'
 
 class ServoCommand(Enum):
-	UP = 'up'
-	DOWN = 'down'
-	TOGGLE = 'toggle'
+    UP = 'up'
+    DOWN = 'down'
+    TOGGLE = 'toggle'
 
 class ControlType(Enum):
-	KEYBOARD = 'Keyboard'
-	CONTROLLER = 'Controller'
+    KEYBOARD = 'Keyboard'
+    CONTROLLER = 'Controller'
 
 
 # controls
 CONTROLS_CONFIG_PATH = 'controls_config.txt'
-NUM_CONTROLS = 10		# number of controls specified in controls config file
+NUM_CONTROLS = 10       # number of controls specified in controls config file
 CONTROLS_DEFAULT_CONFIG = {
-	ControlType.KEYBOARD: {
-		ServoName.GRABBER: {ServoCommand.TOGGLE: '<space>'},
-		ServoName.ELBOW: {ServoCommand.UP: '<Up>', ServoCommand.DOWN: '<Down>'},
-		ServoName.WRIST: {ServoCommand.UP: '<Left>', ServoCommand.DOWN: '<Right>'}
-	}, ControlType.CONTROLLER: {
-		ServoName.GRABBER: {ServoCommand.TOGGLE: '<x>'},
-		ServoName.ELBOW: {ServoCommand.UP: '<a>', ServoCommand.DOWN: '<y>'},
-		ServoName.WRIST: {ServoCommand.UP: '<left_bumper>', ServoCommand.DOWN: '<right_bumper>'}
-		# TODO: temporarily left and right bumpers on controller
-	}
+    ControlType.KEYBOARD: {
+        ServoName.GRABBER: {ServoCommand.TOGGLE: '<space>'},
+        ServoName.ELBOW: {ServoCommand.UP: '<Up>', ServoCommand.DOWN: '<Down>'},
+        ServoName.WRIST: {ServoCommand.UP: '<Left>', ServoCommand.DOWN: '<Right>'}
+    }, ControlType.CONTROLLER: {
+        ServoName.GRABBER: {ServoCommand.TOGGLE: '<x>'},
+        ServoName.ELBOW: {ServoCommand.UP: '<a>', ServoCommand.DOWN: '<y>'},
+        ServoName.WRIST: {ServoCommand.UP: '<left_bumper>', ServoCommand.DOWN: '<right_bumper>'}
+        # TODO: temporarily left and right bumpers on controller
+    }
 }
 
 CONTROLS_XBOX_BINDINGS = {
-	'<a>': 1,
-	'<b>': 2,
-	'<x>': 3,
-	'<y>': 4,
-	'<left_bumper>': 5,
-	'<right_bumper>': 6
+    '<a>': 1,
+    '<b>': 2,
+    '<x>': 3,
+    '<y>': 4,
+    '<left_bumper>': 5,
+    '<right_bumper>': 6
 }
 
 CONTROL_REMAP_KEY = '<Tab>'

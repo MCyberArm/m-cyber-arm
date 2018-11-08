@@ -26,7 +26,6 @@ def init_main_ui(arm):
     title.grid(row = 0, column = 0, columnspan = 14)
 
     # control type dropdown menu
-    arm.curr_control_type.set('Keyboard')
     control_type_set = {control_type.value for control_type in constants.ControlType}
     controlMenu = OptionMenu(app, arm.curr_control_type, *control_type_set, command = lambda choice: print('selected', choice))
     controlMenu.config(width = 20, height = 4, font = '-weight bold')
@@ -59,17 +58,17 @@ def init_main_ui(arm):
 
     tutorial = Label(app, text = tutorialText, font = '-weight bold')
     tutorial.grid(row = 1, column = 9, columnspan = 5, rowspan = 4)
+    
+    # remapping button
+    remap_button = Button(app, font = '-weight bold', text = 'Remap Controls', command = lambda: arm.remapping.set(1), width = 16, height = 4)
+    remap_button.grid(row = 6, column = 0, columnspan = 3)
 
     # keyboard events
     arm.joints[ServoName.GRABBER].bind_keys(app)
     arm.joints[ServoName.ELBOW].bind_keys(app)
     arm.joints[ServoName.WRIST].bind_keys(app)
     
-    # app.bind(constants.CONTROL_REMAP_KEY, remapEvent)       # TODO: make function to handle this
-    
-    # arm.root.protocol('WM_DELETE_WINDOW', lambda: arm.root.destroy())
-    
-    app.bind(constants.CLOSE_WINDOW, lambda e: arm.root.destroy())
+    arm.root.protocol("WM_DELETE_WINDOW", lambda: arm.remapping.set(2))
     
     app.focus()
 
@@ -78,7 +77,6 @@ def init_main_ui(arm):
 def display_controls(arm, control_type):
     output = control_type.value + ':\n'
     
-    print(arm.controls[control_type][ServoName.GRABBER])
     for servo_name, controls in arm.controls[control_type].items():
         for servo_command, binding in controls.items():
             output += servo_name.value + ' ' + servo_command.value + ' ' + binding + '\n'

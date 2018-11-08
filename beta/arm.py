@@ -16,14 +16,21 @@ from joint import Joint
 class Arm:
     def __init__(self):
         self.root = Tk()
+        
         self.curr_control_type = StringVar(self.root)
+        self.curr_control_type.set('Keyboard')
+        
         self.locked = BooleanVar(self.root)
+        self.locked.set(False)
+        
+        # remapping: -1 for not remapping, 1 for remapping, 0 for no current transition between frames, 2 for end of application
+        self.remapping = IntVar(self.root)
+        self.remapping.set(-1)
+        
+        self.last_pressed_button = StringVar(self.root)
         
         self.load_control_config()
         self.setup_joints()
-        
-        # TODO: handle last pressed button sane as for curr_control_type and locked
-        # self.last_pressed_button = StringVar(self.root)
     
     def load_control_config(self):
         self.controls = constants.CONTROLS_DEFAULT_CONFIG
@@ -81,5 +88,3 @@ class Arm:
         #                 joint.move(ControlType.CONTROLLER, servo_command)
         #                 button_pressed = True
         #                 break
-            
-            
