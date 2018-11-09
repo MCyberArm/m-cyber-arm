@@ -65,10 +65,6 @@ class Arm:
         }
         
         # TODO: make this into a for loop iterating over each joint
-        self.joints[ServoName.GRABBER].setup_key_binds(commands_to_keys = self.controls[ControlType.KEYBOARD][ServoName.GRABBER])
-        self.joints[ServoName.ELBOW].setup_key_binds(commands_to_keys = self.controls[ControlType.KEYBOARD][ServoName.ELBOW])
-        self.joints[ServoName.WRIST].setup_key_binds(commands_to_keys = self.controls[ControlType.KEYBOARD][ServoName.WRIST])
-        
         self.joints[ServoName.GRABBER].setup_controller_binds(commands_to_buttons = self.controls[ControlType.CONTROLLER][ServoName.GRABBER])
         self.joints[ServoName.ELBOW].setup_controller_binds(commands_to_buttons = self.controls[ControlType.CONTROLLER][ServoName.ELBOW])
         self.joints[ServoName.WRIST].setup_controller_binds(commands_to_buttons = self.controls[ControlType.CONTROLLER][ServoName.WRIST])

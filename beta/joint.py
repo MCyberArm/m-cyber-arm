@@ -39,14 +39,13 @@ class Joint:
     
     def setup_remap_ui_button(self, app, command_type, text, row, column):
         # TODO: change text in GUI when button is pressed to indicate that it's waiting for a new key
-        # self.remap_button = Button(app, font = '-weight bold', text = text, command = lambda: remap_start(self, command_type), width = 16, height = 4)
         text_variable = StringVar()
         text_variable.set(text)
         self.remap_ui_button_texts[command_type] = text_variable
-        self.remap_button = Button(app, font = '-weight bold', textvariable = text_variable, command = lambda: remap_start(self, command_type), width = 16, height = 4)
-        self.remap_button.grid(row = row, column = column, columnspan = 3)
+        self.remap_button = Button(app, font = '-weight bold', textvariable = text_variable, command = lambda: remap_start(self, command_type), width = 24, height = 4)
+        self.remap_button.grid(row = row, column = column, columnspan = 4)
 
-    def setup_key_binds(self, commands_to_keys):
+    def update_key_binds(self, commands_to_keys):
         self.keyboard_controls = commands_to_keys
     
     def setup_controller_binds(self, commands_to_buttons):

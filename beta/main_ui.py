@@ -63,12 +63,16 @@ def init_main_ui(arm):
     # remapping button
     remap_button = Button(app, font = '-weight bold', text = 'Remap Controls', command = lambda: arm.remapping.set(1), width = 16, height = 4)
     remap_button.grid(row = 6, column = 0, columnspan = 3)
+    
+    # self.joints[ServoName.GRABBER].update_key_binds(commands_to_keys = self.controls[ControlType.KEYBOARD][ServoName.GRABBER])
+    # self.joints[ServoName.ELBOW].update_key_binds(commands_to_keys = self.controls[ControlType.KEYBOARD][ServoName.ELBOW])
+    # self.joints[ServoName.WRIST].update_key_binds(commands_to_keys = self.controls[ControlType.KEYBOARD][ServoName.WRIST])
 
     # keyboard events
-    for name, joint in arm.joints.items():
-        for servo_command, key in joint.keyboard_controls.items():
-            print(joint.name + ': bind', key, 'to', servo_command.value)
-            app.bind(key, eval_key_bind(joint, ControlType.KEYBOARD, servo_command))
+    for servo_name, commands in arm.controls[ControlType.KEYBOARD].items():
+        for servo_command, key in commands.items():
+            print(servo_name.value + ': bind', key, 'to', servo_command.value)
+            app.bind(key, eval_key_bind(arm.joints[servo_name], ControlType.KEYBOARD, servo_command))
     
     arm.root.protocol("WM_DELETE_WINDOW", lambda: arm.remapping.set(2))
     
