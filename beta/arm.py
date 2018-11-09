@@ -64,11 +64,6 @@ class Arm:
             ServoName.WRIST: Joint(ServoName.WRIST.value, constants.GPIO_WRIST, 7.5, constants.SERVO_POS_MIN, constants.SERVO_POS_MAX, constants.SERVO_POS_DELTA, self.curr_control_type, self.locked, self.last_pressed_button_joint, self.last_pressed_button_command)
         }
         
-        # TODO: make this into a for loop iterating over each joint
-        self.joints[ServoName.GRABBER].setup_controller_binds(commands_to_buttons = self.controls[ControlType.CONTROLLER][ServoName.GRABBER])
-        self.joints[ServoName.ELBOW].setup_controller_binds(commands_to_buttons = self.controls[ControlType.CONTROLLER][ServoName.ELBOW])
-        self.joints[ServoName.WRIST].setup_controller_binds(commands_to_buttons = self.controls[ControlType.CONTROLLER][ServoName.WRIST])
-
     def handle_joystick(self):
         count = 1   # TEMP  
         # count = pygame.joystick.get_count()
@@ -79,10 +74,10 @@ class Arm:
 
         #     # only allows for one button to be pressed at a time
         #     button_pressed = False
-        #     for joint in self.joints:
+        #     for servo_name, commands in self.controls[ControlType.CONTROLLER].items():
         #         if button_pressed:
         #             break
-        #         for servo_command, button in joint.controller_controls:
+        #         for servo_command, button in commands.items():
         #             if controller.get_button(constants.CONTROLS_XBOX_BINDINGS[button]) == 1:
         #                 joint.move(ControlType.CONTROLLER, servo_command)
         #                 button_pressed = True

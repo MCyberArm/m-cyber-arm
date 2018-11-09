@@ -34,22 +34,16 @@ class Joint:
         # self.pwm.start(init_pos)
     
     def setup_ui_button(self, app, command_type, text, row, column):
-        self.button = Button(app, font = '-weight bold', text = text, command = lambda: self.move(None, command_type), width = 16, height = 4)
-        self.button.grid(row = row, column = column, columnspan = 3)
+        button = Button(app, font = '-weight bold', text = text, command = lambda: self.move(None, command_type), width = 16, height = 4)
+        button.grid(row = row, column = column, columnspan = 3)
     
     def setup_remap_ui_button(self, app, command_type, text, row, column):
         # TODO: change text in GUI when button is pressed to indicate that it's waiting for a new key
         text_variable = StringVar()
         text_variable.set(text)
         self.remap_ui_button_texts[command_type] = text_variable
-        self.remap_button = Button(app, font = '-weight bold', textvariable = text_variable, command = lambda: remap_start(self, command_type), width = 24, height = 4)
-        self.remap_button.grid(row = row, column = column, columnspan = 4)
-
-    def update_key_binds(self, commands_to_keys):
-        self.keyboard_controls = commands_to_keys
-    
-    def setup_controller_binds(self, commands_to_buttons):
-        self.controller_controls = commands_to_buttons
+        remap_button = Button(app, font = '-weight bold', textvariable = text_variable, command = lambda: remap_start(self, command_type), width = 24, height = 4)
+        remap_button.grid(row = row, column = column, columnspan = 4)
     
     def move(self, control_type, command):
         if control_type != None and control_type.value != self.curr_control_type.get():
