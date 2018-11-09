@@ -60,5 +60,5 @@ CONTROLS_XBOX_BINDINGS = {
 }
 
 CONTROL_REMAP_KEY = '<Tab>'
-CLOSE_WINDOW = '<Escape>'
+CLOSE_WINDOW = '<Escape>'       # TODO: have escape exit each gui frame
 

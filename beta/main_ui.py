@@ -65,9 +65,10 @@ def init_main_ui(arm):
     remap_button.grid(row = 6, column = 0, columnspan = 3)
 
     # keyboard events
-    arm.joints[ServoName.GRABBER].bind_keys(app)
-    arm.joints[ServoName.ELBOW].bind_keys(app)
-    arm.joints[ServoName.WRIST].bind_keys(app)
+    for name, joint in arm.joints.items():
+        for servo_command, key in joint.keyboard_controls.items():
+            print(joint.name + ': bind', key, 'to', servo_command.value)
+            app.bind(key, eval_key_bind(joint, ControlType.KEYBOARD, servo_command))
     
     arm.root.protocol("WM_DELETE_WINDOW", lambda: arm.remapping.set(2))
     
@@ -83,3 +84,6 @@ def display_controls(arm, control_type):
             output += servo_name.value + ' ' + servo_command.value + ' ' + binding + '\n'
     
     return output
+
+# required because lambdas are lazily evaluated in python, causing weird behavior when calling the same lambda in a for loop
+eval_key_bind = lambda joint, control_type, servo_command: (lambda e: joint.move(control_type, servo_command))

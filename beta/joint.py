@@ -52,12 +52,6 @@ class Joint:
     def setup_controller_binds(self, commands_to_buttons):
         self.controller_controls = commands_to_buttons
     
-    def bind_keys(self, app):
-        for servo_command, key in self.keyboard_controls.items():
-            # TODO: fix keyboard button press --> currently up and down arrows both move it in same direction
-            print(self.name + ': bind', key, 'to', servo_command.value)
-            app.bind(key, lambda e: self.move(ControlType.KEYBOARD, servo_command))
-    
     def move(self, control_type, command):
         if control_type != None and control_type.value != self.curr_control_type.get():
             print(self.name + ': ' + control_type.value + ' is locked')
