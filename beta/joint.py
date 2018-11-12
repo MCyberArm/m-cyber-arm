@@ -4,7 +4,7 @@ joint.py
 A controllable servo on the arm
 """
 
-# import RPi.GPIO as gpio
+import RPi.GPIO as gpio
 from tkinter import *
 import constants
 from constants import ServoName
@@ -29,9 +29,9 @@ class Joint:
         
         self.remap_ui_button_texts = {}
         
-        # gpio.setup(gpio_pin, gpio.OUT)
-        # self.pwm = gpio.PWM(gpio_pin, constants.SERVO_HERTZ)
-        # self.pwm.start(init_pos)
+        gpio.setup(gpio_pin, gpio.OUT)
+        self.pwm = gpio.PWM(gpio_pin, constants.SERVO_HERTZ)
+        self.pwm.start(init_pos)
     
     def setup_ui_button(self, app, command_type, text, row, column):
         button = Button(app, font = '-weight bold', text = text, command = lambda: self.move(None, command_type), width = 16, height = 4)
@@ -74,7 +74,7 @@ class Joint:
         print(self.name + ' ' + command.value + ':', self.pos)
         
         # update position of joint
-        # self.pwm.ChangeDutyCycle(self.pos)
+        self.pwm.ChangeDutyCycle(self.pos)
 
 
 def remap_start(joint, command):

@@ -9,9 +9,8 @@ from enum import Enum
 
 # servo GPIO pin numbers on the Raspberry Pi
 GPIO_GRABBER = 12
-GPIO_WRIST = -1         # TODO: assign GPIO pin
+GPIO_WRIST = 18
 GPIO_ELBOW = 24
-
 
 # servos
 SERVO_HERTZ = 50
