@@ -36,9 +36,8 @@ def init_main_ui(arm):
     toggle_lock_checkbox.grid(row = 2, column = 0, columnspan = 4)
 
     # checkbox for whether to hold directional button for input
-    # TODO: implement this
-    # toggle_hold_checkbox = Checkbutton(app, font = '-weight bold', text = 'Toggle Button Holding', variable = TODO, width = 20, height = 4)
-    # toggle_hold_checkbox.grid(row = 2, column = 5, columnspan = 4)
+    toggle_hold_checkbox = Checkbutton(app, font = '-weight bold', text = 'Toggle Button Holding', variable = arm.held, width = 20, height = 4)
+    toggle_hold_checkbox.grid(row = 2, column = 5, columnspan = 4)
 
     # buttons for arm movement
     arm.joints[ServoName.ELBOW].setup_ui_button(app, command_type = ServoCommand.UP, text = 'Elbow Up', row = 3, column = 3)

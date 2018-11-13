@@ -12,6 +12,11 @@ GPIO_GRABBER = 12
 GPIO_WRIST = 18
 GPIO_ELBOW = 24
 
+# physical button GPIO pin numbers
+GPIO_BUTTON_GRABBER = 15
+GPIO_BUTTON_WRIST = 17
+GPIO_BUTTON_ELBOW = 19
+
 # servos
 SERVO_HERTZ = 50
 SERVO_POS_MIN = 2.5
@@ -60,4 +65,3 @@ CONTROLS_XBOX_BINDINGS = {
 
 CONTROL_REMAP_KEY = '<Tab>'
 CLOSE_WINDOW = '<Escape>'       # TODO: have escape exit each gui frame
-

@@ -7,7 +7,7 @@ main.py
 - handles xbox controller input
 """
 
-import pygame
+# import pygame
 import time
 from arm import Arm
 import constants
@@ -21,8 +21,8 @@ def main():
     
     app = None
     
-    pygame.init()
-    pygame.joystick.init()
+    # pygame.init()
+    # pygame.joystick.init()
     
     while True:
         if arm.remapping.get() == -1:
@@ -45,6 +45,8 @@ def main():
         app.update()
         
         arm.handle_joystick()
+        
+        arm.handle_physical_buttons()
         
         time.sleep(0.2)
 # except:
