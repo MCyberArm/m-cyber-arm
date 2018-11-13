@@ -51,6 +51,7 @@ def main():
         time.sleep(0.2)
 # except:
     print('Closing application')
+    gpio.cleanup()
     # TODO: disable pwm and GPIO things here
     # TODO: save changes to controls file
 

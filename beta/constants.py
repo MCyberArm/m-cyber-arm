@@ -36,6 +36,7 @@ class ServoCommand(Enum):
 class ControlType(Enum):
     KEYBOARD = 'Keyboard'
     CONTROLLER = 'Controller'
+    PHYSICAL = 'Physical Buttons'
 
 
 # controls

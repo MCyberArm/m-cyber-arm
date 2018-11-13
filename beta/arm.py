@@ -35,6 +35,8 @@ class Arm:
         
         self.load_control_config()
         self.setup_joints()
+        
+        gpio.setup(constants.GPIO_BUTTON_GRABBER, gpio.IN, pull_up_down = gpio.PUD_UP)
     
     def load_control_config(self):
         self.controls = constants.CONTROLS_DEFAULT_CONFIG
@@ -84,5 +86,11 @@ class Arm:
                         break
     
     def handle_physical_buttons(self):
-        TODO = 1
         # TODO: handle physical buttons
+        # GPIO_BUTTON_GRABBER = 15
+        # GPIO_BUTTON_WRIST = 17
+        # GPIO_BUTTON_ELBOW = 19
+        
+        if gpio.input(constants.GPIO_BUTTON_GRABBER):
+            print('physical button grabber pressed')
+            self.joints[ServoName.GRABBER].move(ControlType.PHYSICAL, ServoCommand.TOGGLE)
