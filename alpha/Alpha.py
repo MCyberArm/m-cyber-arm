@@ -12,8 +12,14 @@ controlTypes = {'Keyboard', 'Controller'}
 grabberIsOn = 0
 currentPos = 7.5
 controls = {}
+Remapping = 0
+CFGPath = "config.txt"
+# S1D = "Servo 1 Down"
+# S1U = "Servo 1 Up"
+# S2T = "Servo 2 Toggle" (because that's all we do with it)
 controls['k'] = {}
 controls['c'] = {}
+lastPressedButton = ''
 root = Tk()
 controlVar = StringVar(root)
 toggleHoldVar = IntVar(root)
@@ -33,7 +39,7 @@ grabberPWM.start(2.5)
 # functions
 def loadCFG():
     global controls
-    CFGPath = "config.txt"
+    global CFGPath
     try:
         with open(CFGPath, 'r') as f:
             lines = f.readlines()
@@ -42,37 +48,19 @@ def loadCFG():
                 if len(ctrls) != 3 or (ctrls[0] != 'k' and ctrls[0] != 'c'):
                     
                     print("ERROR! Invalid config")
-                    exit(1)
+                    raise IOError
                 controls[ctrls[0]][ctrls[1]] = ctrls[2]
                 print("controls[",ctrls[0],"][",ctrls[1], "] = ", ctrls[2])
 
 
     except IOError as e:
         print("Couldn't find config file. Using default config instead. Error code: (%s)." % e)
-        controls['k']['S1D'] = '<Up>'
-        controls['k']['S1U'] = '<Down>'
+        controls['k']['S1U'] = '<Up>'
+        controls['k']['S1D'] = '<Down>'
         controls['k']['S2T'] = '<space>'
-        controls['c']['S1D'] = '<a>'
         controls['c']['S1U'] = '<y>'
+        controls['c']['S1D'] = '<a>'
         controls['c']['S2T'] = '<x>'
-
-def writeCFG():
-    global controls
-    print("Editing config")
-    print("Press to move servo 1 down, or press ENTER to keep existing keybind:")
-    # read input here
-    print("Press to move servo 1 up, or press ENTER to keep existing keybind:")
-    # read input here
-    print("Press button to toggle clamp, or press ENTER to keep existing keybind:")
-    # read input here
-
-    #open file
-    with open("CFG", w) as f:
-        for keyVal, ctrlType in controls.items():
-            for fnctn, keybind in ctrlType.items():
-                write(ctrlType, " ", fnctn, keybind)
-
-
 
 def setupGPIO():
     print("Proper Initialization will go here")
@@ -95,7 +83,8 @@ def S2T(event):
     grabberPressed()
 
 def remapEvent(event):
-    writeCFG()
+    global Remapping
+    Remapping = 1
 
 def elbowUpPressed(toggleHoldVar):
     print('elbow up pressed')
@@ -131,6 +120,81 @@ def grabberPressed():
     print('grabber pressed: ' + str(grabberIsOn))
     grabberValues = [2.5, 5.5]
     grabberPWM.ChangeDutyCycle(grabberValues[grabberIsOn])
+
+def remap(function, inputKey):
+    # Get button pressed here
+    global controls
+    controls['k'][function] = inputKey
+
+def onRemapClose():
+    global Remapping
+    Remapping = -1
+
+def remapEvent(event):
+    global lastPressedButton
+    print("Printing in remapEvent")
+    if(lastPressedButton == ''):
+        return
+    # Check if pressed a protected key (ESC, Tab, etc)
+    print(repr(event.char))
+    remap(lastPressedButton, repr(event.char))
+    lastPressedButton = ''
+
+def remapUI():
+    global controls
+    global lastPressedButton
+    # make window
+    root.title('M Cyber Arm Key Remapping UI')
+    
+    # make frame
+    remapApp = Frame(root)
+    remapApp.grid()
+    remapApp.configure(background = 'gray')
+
+    # title label
+    title = Label(app, text = 'M Cyber Arm Key Remapping UI', font = '-weight bold')
+    title.grid(row = 0, column = 0, columnspan = 8)
+
+    # button to return to arm control
+    root.protocol("WM_DELETE_WINDOW", onRemapClose)
+
+    # buttons for arm movement
+    elbowUpButton = Button(app, font = '-weight bold', text = 'Elbow Up', command = lambda: lastPressedButton = 'S1U', width = 16, height = 4)
+    elbowUpButton.grid(row = 3, column = 0, columnspan = 3)
+
+    elbowDownButton = Button(app, font = '-weight bold', text = 'Elbow Down', command = lambda: lastPressedButton = 'S1D', width = 16, height = 4)
+    elbowDownButton.grid(row = 4, column = 0, columnspan = 3)
+
+    grabberButton = Button(app, font = '-weight bold', text = 'Grab', command = lambda: lastPressedButton = 'S2T', width = 16, height = 4)
+    grabberButton.grid(row = 5, column = 0, columnspan = 3)
+
+    # tutorial text box
+    tutorialText = 'Tutorial\n\
+        This UI provides a panel to remap the keys used \n\
+        to control the Pi. Press a key to map it to the \n\
+        command shown at the top of the screen, or press\n\
+        Tab to keep the current mapping. Below you can\n\
+        see the current mappings for each action. Currently,\n\
+        this feature is for keyboard only. \n\
+        Controller:\n\
+        Y - Up\n\
+        A - Down\n\
+        X - Toggle Grab\n\n\
+        Keyboard:\n\
+        ', controls['k']['S1U'], ' - Up\n\
+        ', controls['k']['S1D'], ' - Down\n\
+        ', controls['k']['S2T'],' - Toggle Grab'
+    tutorial = Label(app, text = tutorialText, font = '-weight bold')
+    tutorial.grid(row = 1, column = 3, columnspan = 5, rowspan = 4)
+
+    # keyboard events
+    app.bind("<Key>", remapEvent)
+    remapApp.focus()
+
+    #root.mainloop()
+
+    return remapApp
+
 
 def setupUI():
     global controls
@@ -190,7 +254,7 @@ def setupUI():
     app.bind(controls['k']['S1U'], S1U) 
     app.bind(controls['k']['S1D'], S1D)
     app.bind(controls['k']['S2T'], S2T)
-    #app.bind("<Tab>", remapEvent)
+    app.bind("<Tab>", remapEvent)
     app.focus()
 
     #root.mainloop()
@@ -198,6 +262,8 @@ def setupUI():
     return app
 
 def main():
+    global Remapping
+    global CFGPath
     loadCFG()
     setupGPIO()
     try:
@@ -214,7 +280,14 @@ def main():
                     print('button pressed')
 
             count = pygame.joystick.get_count()
-
+            if(Remapping == 1):
+                Remapping = 0
+                app.destroy()
+                app = remapUI()
+            if(Remapping == -1):
+                Remapping = 0
+                app.destroy()
+                app = setupUI()
             if count == 1:
                 # controller is detected
                 controller = pygame.joystick.Joystick(0)
@@ -241,6 +314,12 @@ def main():
     p.stop()
     GPIO.cleanup()
     pygame.quit()
+    #update controls here
+    with open(CFGPath, w) as f:
+    for keyVal, ctrlType in controls.items():
+        for fnctn, keybind in ctrlType.items():
+            write(ctrlType, " ", fnctn, keybind)
+
 
 if __name__ == '__main__':
     main()
