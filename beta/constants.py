@@ -38,6 +38,10 @@ class ControlType(Enum):
     CONTROLLER = 'Controller'
     PHYSICAL = 'Physical Buttons'
 
+class Mode(Enum):
+    MAIN = 'Main'
+    REMAP = 'Remap'
+
 
 # controls
 CONTROLS_CONFIG_PATH = 'controls_config.txt'

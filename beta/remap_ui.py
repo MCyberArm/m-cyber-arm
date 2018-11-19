@@ -15,7 +15,7 @@ from joint import Joint
 
 def init_remap_ui(arm):
     # make window
-    arm.root.title('M Cyber Arm Key Remapping UI')
+    arm.root.title('MCyber Arm Key Remapping UI')
     
     # make frame
     app = Frame(arm.root)
@@ -27,8 +27,21 @@ def init_remap_ui(arm):
     title.grid(row = 0, column = 0, columnspan = 8)
     
     # remappable buttons
-    i = 1
+    # keyboard
+    keyboard_label = Label(app, text = 'Keyboard Remap', font = '-weight bold')
+    keyboard_label.grid(row = 1, column = 0, columnspan = 3)
+    i = 2
     for servo_name, commands in arm.controls[ControlType.KEYBOARD].items():
+        for servo_command, key in commands.items():
+            text = servo_name.value + ' ' + servo_command.value + ' ' + key
+            arm.joints[servo_name].setup_remap_ui_button(app, servo_command, text, i, 0)
+            i += 1
+    
+    # controller
+    controller_label = Label(app, text = 'Controller Remap', font = '-weight bold')
+    controller_label.grid(row = i, column = 0, columnspan = 3)
+    i += 1
+    for servo_name, commands in arm.controls[ControlType.CONTROLLER].items():
         for servo_command, key in commands.items():
             text = servo_name.value + ' ' + servo_command.value + ' ' + key
             arm.joints[servo_name].setup_remap_ui_button(app, servo_command, text, i, 0)

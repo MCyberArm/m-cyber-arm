@@ -4,13 +4,14 @@ arm.py
 The primary class that represents the arm's servos and any connected GUIs
 """
 
-import RPi.GPIO as gpio
-import pygame
+# import RPi.GPIO as gpio
+# import pygame
 from tkinter import *
 import constants
 from constants import ServoName
 from constants import ServoCommand
 from constants import ControlType
+from constants import Mode
 from joint import Joint
 
 class Arm:
@@ -36,7 +37,7 @@ class Arm:
         self.load_control_config()
         self.setup_joints()
         
-        gpio.setup(constants.GPIO_BUTTON_GRABBER, gpio.IN, pull_up_down = gpio.PUD_UP)
+        # gpio.setup(constants.GPIO_BUTTON_GRABBER, gpio.IN, pull_up_down = gpio.PUD_UP)
     
     def load_control_config(self):
         self.controls = constants.CONTROLS_DEFAULT_CONFIG
@@ -58,8 +59,8 @@ class Arm:
             self.controls = constants.CONTROLS_DEFAULT_CONFIG
     
     def setup_joints(self):
-        gpio.setmode(gpio.BCM)
-        gpio.setwarnings(False)
+        # gpio.setmode(gpio.BCM)
+        # gpio.setwarnings(False)
         
         self.joints = {
             ServoName.GRABBER: Joint(ServoName.GRABBER.value, constants.GPIO_GRABBER, 2.5, constants.SERVO_POS_MIN, constants.SERVO_POS_MAX, constants.SERVO_POS_DELTA, self.curr_control_type, self.locked, self.held, self.last_pressed_button_joint, self.last_pressed_button_command),
@@ -67,30 +68,31 @@ class Arm:
             ServoName.WRIST: Joint(ServoName.WRIST.value, constants.GPIO_WRIST, 7.5, constants.SERVO_POS_MIN, constants.SERVO_POS_MAX, constants.SERVO_POS_DELTA, self.curr_control_type, self.locked, self.held, self.last_pressed_button_joint, self.last_pressed_button_command)
         }
         
-    def handle_joystick(self):
-        count = pygame.joystick.get_count()
-        if count == 1:
-            # controller is detected
-            controller = pygame.joystick.Joystick(0)
-            controller.init()
+    def handle_joystick(self, mode):
+        count = 1
+        # count = pygame.joystick.get_count()
+        # if count == 1:
+        #     # controller is detected
+        #     controller = pygame.joystick.Joystick(0)
+        #     controller.init()
 
-            # only allows for one button to be pressed at a time
-            button_pressed = False
-            for servo_name, commands in self.controls[ControlType.CONTROLLER].items():
-                if button_pressed:
-                    break
-                for servo_command, button in commands.items():
-                    if controller.get_button(constants.CONTROLS_XBOX_BINDINGS[button]) == 1:
-                        joint.move(ControlType.CONTROLLER, servo_command)
-                        button_pressed = True
-                        break
+        #     # only allows for one button to be pressed at a time
+        #     button_pressed = False
+        #     for servo_name, commands in self.controls[ControlType.CONTROLLER].items():
+        #         if button_pressed:
+        #             break
+        #         for servo_command, button in commands.items():
+        #             if controller.get_button(constants.CONTROLS_XBOX_BINDINGS[button]) == 1:
+        #                 joint.move(ControlType.CONTROLLER, servo_command)
+        #                 button_pressed = True
+        #                 break
     
     def handle_physical_buttons(self):
         # TODO: handle physical buttons
         # GPIO_BUTTON_GRABBER = 15
         # GPIO_BUTTON_WRIST = 17
         # GPIO_BUTTON_ELBOW = 19
-        
-        if gpio.input(constants.GPIO_BUTTON_GRABBER):
-            print('physical button grabber pressed')
-            self.joints[ServoName.GRABBER].move(ControlType.PHYSICAL, ServoCommand.TOGGLE)
+        count = 1        
+        # if gpio.input(constants.GPIO_BUTTON_GRABBER):
+        #     print('physical button grabber pressed')
+        #     self.joints[ServoName.GRABBER].move(ControlType.PHYSICAL, ServoCommand.TOGGLE)
