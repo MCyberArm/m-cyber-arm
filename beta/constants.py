@@ -8,9 +8,9 @@ from enum import Enum
 
 
 # servo GPIO pin numbers on the Raspberry Pi
-GPIO_GRABBER = 12
-GPIO_WRIST = 18
-GPIO_ELBOW = 24
+GPIO_GRABBER = 24
+GPIO_WRIST = 12
+GPIO_ELBOW = 18
 
 # physical button GPIO pin numbers
 GPIO_BUTTON_GRABBER = 15
