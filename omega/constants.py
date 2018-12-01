@@ -12,11 +12,13 @@ GPIO_GRABBER = 24
 GPIO_WRIST = 12
 GPIO_ELBOW = 18
 
+
 # servos
 SERVO_HERTZ = 50
 SERVO_POS_MIN = 2.5
 SERVO_POS_MAX = 12.5
 SERVO_POS_DELTA = 0.5
+
 
 # initial, min, and max servo locations
 GRABBER_POS_INIT = 8.75
@@ -30,6 +32,7 @@ ELBOW_POS_MAX = SERVO_POS_MAX
 WRIST_POS_INIT = 7.5
 WRIST_POS_MIN = SERVO_POS_MIN
 WRIST_POS_MAX = SERVO_POS_MAX
+
 
 class ServoName(Enum):
     GRABBER = 'grabber'

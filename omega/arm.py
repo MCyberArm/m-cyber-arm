@@ -55,6 +55,13 @@ class Arm:
             print('Using default config instead')
             self.controls = constants.CONTROLS_DEFAULT_CONFIG
     
+    def save_control_config(self):
+        with open(constants.CONTROLS_CONFIG_PATH, 'w') as f:
+            for control_type, servos in self.controls.items():
+                for servo_name, servo_commands in servos.items():
+                    for servo_command, binding in servo_commands.items():
+                        f.write(control_type.value + " " + servo_name.value + " " + servo_command.value + " " + binding + "\n")
+    
     def setup_joints(self):
         # gpio.setmode(gpio.BCM)
         # gpio.setwarnings(False)

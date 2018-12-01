@@ -16,7 +16,6 @@ from remap_ui import init_remap_ui
 
 
 def main():
-# try:
     arm = Arm()
     
     app = None
@@ -49,10 +48,9 @@ def main():
         arm.handle_physical_buttons()
         
         time.sleep(0.2)
-# except:
+    
+    arm.save_control_config()
     print('Closing application')
-    # TODO: disable pwm and GPIO things here
-    # TODO: save changes to controls file
 
 if __name__ == '__main__':
     main()
