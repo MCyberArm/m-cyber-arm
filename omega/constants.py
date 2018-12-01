@@ -49,10 +49,20 @@ class ControlType(Enum):
     CONTROLLER = 'Controller'
     MOUSE = 'Mouse'
 
+class MouseControl(Enum):
+    CLICK = 'click'
+    SCROLL = 'scroll'
+
+class MouseBind(Enum):
+    LEFT = 'left'
+    RIGHT = 'right'
+    UP = 'up'
+    DOWN = 'down'
+
 
 # controls
 CONTROLS_CONFIG_PATH = 'controls_config.txt'
-NUM_CONTROLS = 10       # number of controls specified in controls config file
+NUM_CONTROLS = 13       # number of controls specified in controls config file
 CONTROLS_DEFAULT_CONFIG = {
     ControlType.KEYBOARD: {
         ServoName.GRABBER: {ServoCommand.TOGGLE: '<space>'},
@@ -62,12 +72,12 @@ CONTROLS_DEFAULT_CONFIG = {
         ServoName.GRABBER: {ServoCommand.TOGGLE: '<x>'},
         ServoName.ELBOW: {ServoCommand.UP: '<a>', ServoCommand.DOWN: '<y>'},
         ServoName.WRIST: {ServoCommand.UP: '<left_bumper>', ServoCommand.DOWN: '<right_bumper>'}
-        # TODO: temporarily left and right bumpers on controller
     }
-    # }, ControlType.MOUSE: {
-    #     ServoName.GRABBER: {ServoCommand.TOGGLE: 'right'},
-    #     ServoName.ELBOW: {ServoCommand.UP: 'scroll_up', ServoCommand.DOWN: 'scroll_down'},
-    # }
+}
+
+CONTROLS_MOUSE_DEFAULT_CONFIG = {
+    MouseControl.CLICK: {MouseBind.RIGHT: {ServoName.GRABBER: ServoCommand.TOGGLE}},
+    MouseControl.SCROLL: {MouseBind.UP: {ServoName.ELBOW: ServoCommand.UP}, MouseBind.DOWN: {ServoName.ELBOW: ServoCommand.DOWN}}
 }
 
 CONTROLS_XBOX_BINDINGS = {

@@ -8,3 +8,6 @@ Controller elbow up <a>
 Controller elbow down <y>
 Controller wrist up <left_bumper>
 Controller wrist down <right_bumper>
+Mouse grabber toggle click right
+Mouse elbow up scroll up
+Mouse elbow down scroll down

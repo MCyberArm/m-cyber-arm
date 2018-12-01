@@ -12,6 +12,8 @@ import constants
 from constants import ServoName
 from constants import ServoCommand
 from constants import ControlType
+from constants import MouseControl
+from constants import MouseBind
 from joint import Joint
 
 class Arm:
@@ -39,22 +41,30 @@ class Arm:
     
     def load_control_config(self):
         self.controls = constants.CONTROLS_DEFAULT_CONFIG
+        self.mouse_controls = constants.CONTROLS_MOUSE_DEFAULT_CONFIG
         try:
             with open(constants.CONTROLS_CONFIG_PATH, 'r') as f:
                 lines = f.readlines()
                 if len(lines) != constants.NUM_CONTROLS:
-                    raise IOError(lines)
+                    raise IOError('Number of controls in config (' + str(len(lines)) + ') should be ' + str(constants.NUM_CONTROLS))
                 for line in lines:
                     ctrls = line.split()
-                    if len(ctrls) != 4 or (ctrls[0] != ControlType.KEYBOARD.value and ctrls[0] != ControlType.CONTROLLER.value):
-                        raise IOError(ctrls)
+                    
                     # TODO: check if control is valid
-                    # format: [control_type] [servo_name] [servo_command] [control]
-                    self.controls[ControlType(ctrls[0])][ServoName(ctrls[1])][ServoCommand(ctrls[2])] = ctrls[3]
+                    if len(ctrls) == 5 and ctrls[0] == ControlType.MOUSE.value:
+                        # format in file: [control_type] [servo_name] [servo_command] [mouse_control] [mouse_bind]
+                        self.mouse_controls[MouseControl(ctrls[3])][MouseBind(ctrls[4])][ServoName(ctrls[1])] = ServoCommand(ctrls[2])
+                    elif len(ctrls) == 4 and (ctrls[0] == ControlType.KEYBOARD.value or ctrls[0] == ControlType.CONTROLLER.value):
+                        # format in file: [control_type] [servo_name] [servo_command] [control]
+                        self.controls[ControlType(ctrls[0])][ServoName(ctrls[1])][ServoCommand(ctrls[2])] = ctrls[3]
+                    else:
+                        raise IOError(ctrls)
+
         except IOError as e:
             print('ERROR: invalid config:', repr(e))
             print('Using default config instead')
             self.controls = constants.CONTROLS_DEFAULT_CONFIG
+            self.mouse_controls = constants.CONTROLS_MOUSE_DEFAULT_CONFIG
     
     def save_control_config(self):
         with open(constants.CONTROLS_CONFIG_PATH, 'w') as f:
@@ -109,27 +119,23 @@ class Arm:
         pass
 
     def mouse_click(self, x, y, button, pressed):
-        # print('mouse click')
-        # print('button:', button)
-        # print('press down') if pressed else print('press up')
-        
         if pressed:
             if button == mouse.Button.left:
                 print('mouse: left pressed')
             elif button == mouse.Button.right:
                 print('mouse: right pressed')
-                self.joints[ServoName.GRABBER].move(ControlType.MOUSE, ServoCommand.TOGGLE)
+                for servo_name, servo_command in self.mouse_controls[MouseControl.CLICK][MouseBind.RIGHT].items():
+                    self.joints[servo_name].move(ControlType.MOUSE, servo_command)
             elif button == mouse.Button.middle:
                 print('mouse: middle pressed')
 
     def mouse_scroll(self, x, y, dx, dy):
-        # print('mouse scroll')
-        # print('dx:', dx)
-        # print('dy:', dy)
-        
         if dy > 0:
             print('mouse: scroll up')
-            self.joints[ServoName.ELBOW].move(ControlType.MOUSE, ServoCommand.UP)
+            for servo_name, servo_command in self.mouse_controls[MouseControl.SCROLL][MouseBind.UP].items():
+                self.joints[servo_name].move(ControlType.MOUSE, servo_command)
         elif dy < 0:
             print('mouse: scroll down')
-            self.joints[ServoName.ELBOW].move(ControlType.MOUSE, ServoCommand.DOWN)
+            for servo_name, servo_command in self.mouse_controls[MouseControl.SCROLL][MouseBind.DOWN].items():
+                self.joints[servo_name].move(ControlType.MOUSE, servo_command)
+    

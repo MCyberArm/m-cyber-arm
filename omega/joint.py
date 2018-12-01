@@ -12,6 +12,7 @@ from constants import ServoName
 from constants import ServoCommand
 from constants import ControlType
 
+
 class Joint:
     def __init__(self, name, gpio_pin, init_pos, min_pos, max_pos, delta_pos, curr_control_type, locked, held, last_pressed_button_joint, last_pressed_button_command):
         self.name = name
