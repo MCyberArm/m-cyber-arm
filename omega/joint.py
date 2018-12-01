@@ -48,55 +48,57 @@ class Joint:
         remap_button.grid(row = row, column = column, columnspan = 4)
     
     def move(self, control_type, command):
-        if control_type != None and control_type.value != self.curr_control_type.get():
-            print(self.name + ': ' + control_type.value + ' is locked')
-            return
-        
-        if self.locked.get():
-            print(self.name, 'is locked')
-            return
-        
-        # TODO: figure out how to interrupt the held loop (by pressing same button again)
-        print('command:', command.value)
-        if self.held.get():
-            while True:
-                # update position
-                if command == ServoCommand.UP:
-                    self.pos = max(self.pos - self.delta_pos, self.min_pos)
-                elif command == ServoCommand.DOWN:
-                    self.pos = min(self.pos + self.delta_pos, self.max_pos)
-                elif command == ServoCommand.TOGGLE:
-                    if self.pos == self.min_pos:
-                        self.pos = self.max_pos
-                    else:
-                        self.pos = self.min_pos
-                
-                # update position of joint
-                print(self.name + ' ' + command.value + ':', self.pos)
-                # self.pwm.ChangeDutyCycle(self.pos)
-                
-                if command == ServoCommand.UP and self.pos == self.min_pos: break
-                elif command == ServoCommand.DOWN and self.pos == self.max_pos: break
-                elif command == ServoCommand.TOGGLE: break
-                
-                time.sleep(0.2)
-        else:
-            # update position
-            if command == ServoCommand.UP:
-                self.pos = max(self.pos - self.delta_pos, self.min_pos)
-            elif command == ServoCommand.DOWN:
-                self.pos = min(self.pos + self.delta_pos, self.max_pos)
-            elif command == ServoCommand.TOGGLE:
-                # TODO: deal with case where joint is almost closed and then gets toggled (should open)
-                if self.pos == self.min_pos:
-                    self.pos = self.max_pos
-                else:
-                    self.pos = self.min_pos
+        if control_type != ControlType.MOUSE:
+            if control_type != None and control_type.value != self.curr_control_type.get():
+                print(self.name + ': ' + control_type.value + ' is locked')
+                return
             
-            print(self.name + ' ' + command.value + ':', self.pos)
+            if self.locked.get():
+                print(self.name, 'is locked')
+                return
             
-            # update position of joint
-            # self.pwm.ChangeDutyCycle(self.pos)
+            # TODO: figure out how to interrupt the held loop (by pressing same button again)
+            print('command:', command.value)
+            if self.held.get():
+                while True:
+                    # update position
+                    if command == ServoCommand.UP:
+                        self.pos = max(self.pos - self.delta_pos, self.min_pos)
+                    elif command == ServoCommand.DOWN:
+                        self.pos = min(self.pos + self.delta_pos, self.max_pos)
+                    elif command == ServoCommand.TOGGLE:
+                        if self.pos == self.min_pos:
+                            self.pos = self.max_pos
+                        else:
+                            self.pos = self.min_pos
+                    
+                    # update position of joint
+                    print(self.name + ' ' + command.value + ':', self.pos)
+                    # self.pwm.ChangeDutyCycle(self.pos)
+                    
+                    if command == ServoCommand.UP and self.pos == self.min_pos: break
+                    elif command == ServoCommand.DOWN and self.pos == self.max_pos: break
+                    elif command == ServoCommand.TOGGLE: break
+                    
+                    time.sleep(0.2)
+                return
+            
+        # update position
+        if command == ServoCommand.UP:
+            self.pos = max(self.pos - self.delta_pos, self.min_pos)
+        elif command == ServoCommand.DOWN:
+            self.pos = min(self.pos + self.delta_pos, self.max_pos)
+        elif command == ServoCommand.TOGGLE:
+            # TODO: deal with case where joint is almost closed and then gets toggled (should open)
+            if self.pos == self.min_pos:
+                self.pos = self.max_pos
+            else:
+                self.pos = self.min_pos
+        
+        print(self.name + ' ' + command.value + ':', self.pos)
+        
+        # update position of joint
+        # self.pwm.ChangeDutyCycle(self.pos)
 
 
 def remap_start(joint, command):

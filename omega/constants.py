@@ -47,6 +47,7 @@ class ServoCommand(Enum):
 class ControlType(Enum):
     KEYBOARD = 'Keyboard'
     CONTROLLER = 'Controller'
+    MOUSE = 'Mouse'
 
 
 # controls
@@ -63,6 +64,10 @@ CONTROLS_DEFAULT_CONFIG = {
         ServoName.WRIST: {ServoCommand.UP: '<left_bumper>', ServoCommand.DOWN: '<right_bumper>'}
         # TODO: temporarily left and right bumpers on controller
     }
+    # }, ControlType.MOUSE: {
+    #     ServoName.GRABBER: {ServoCommand.TOGGLE: 'right'},
+    #     ServoName.ELBOW: {ServoCommand.UP: 'scroll_up', ServoCommand.DOWN: 'scroll_down'},
+    # }
 }
 
 CONTROLS_XBOX_BINDINGS = {

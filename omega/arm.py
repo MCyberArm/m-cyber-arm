@@ -6,6 +6,7 @@ The primary class that represents the arm's servos and any connected GUIs
 
 # import RPi.GPIO as gpio
 # import pygame
+from pynput import mouse
 from tkinter import *
 import constants
 from constants import ServoName
@@ -96,5 +97,39 @@ class Arm:
         # TODO: handle physical buttons
 
     def handle_mouse_input(self):
-        TODO = 1
-        # TODO: handle mouse input
+        print('handle mouse input')
+        with mouse.Listener(
+            on_move = lambda x, y: self.mouse_move(x, y),
+            on_click = lambda x, y, button, pressed: self.mouse_click(x, y, button, pressed),
+            on_scroll = lambda x, y, dx, dy: self.mouse_scroll(x, y, dx, dy)
+        ) as listener:
+            listener.join()
+    
+    def mouse_move(self, x, y):
+        pass
+
+    def mouse_click(self, x, y, button, pressed):
+        # print('mouse click')
+        # print('button:', button)
+        # print('press down') if pressed else print('press up')
+        
+        if pressed:
+            if button == mouse.Button.left:
+                print('mouse: left pressed')
+            elif button == mouse.Button.right:
+                print('mouse: right pressed')
+                self.joints[ServoName.GRABBER].move(ControlType.MOUSE, ServoCommand.TOGGLE)
+            elif button == mouse.Button.middle:
+                print('mouse: middle pressed')
+
+    def mouse_scroll(self, x, y, dx, dy):
+        # print('mouse scroll')
+        # print('dx:', dx)
+        # print('dy:', dy)
+        
+        if dy > 0:
+            print('mouse: scroll up')
+            self.joints[ServoName.ELBOW].move(ControlType.MOUSE, ServoCommand.UP)
+        elif dy < 0:
+            print('mouse: scroll down')
+            self.joints[ServoName.ELBOW].move(ControlType.MOUSE, ServoCommand.DOWN)
