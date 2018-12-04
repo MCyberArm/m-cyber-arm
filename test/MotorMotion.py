@@ -10,6 +10,9 @@ p.start(10) # Initialization
 
 try:
   while True:
+    p.ChangeDutyCycle(2.5)
+    time.sleep(0.5)
+    print("Set 2.5")
     p.ChangeDutyCycle(5)
     time.sleep(0.5)
     print("Set 5")
@@ -18,8 +21,10 @@ try:
     print("Set 7.5")
     p.ChangeDutyCycle(10)
     time.sleep(0.5)
+    print("Set 10")
     p.ChangeDutyCycle(12.5)
     time.sleep(0.5)
+    print("Set 12.5")
     p.ChangeDutyCycle(10)
     time.sleep(0.5)
     p.ChangeDutyCycle(7.5)
