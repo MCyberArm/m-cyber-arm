@@ -40,7 +40,7 @@ class Arm:
         
         self.load_control_config()
         self.setup_joints()
-        global mouseButtonsPressed = [false, false, false]
+        
     
     def load_control_config(self):
         self.controls = constants.CONTROLS_DEFAULT_CONFIG
@@ -113,7 +113,7 @@ class Arm:
         print('handle mouse input')
         with mouse.Listener(
             on_move = lambda x, y: self.mouse_move(x, y),
-            on_click = lambda x, y, button, pressed: self.mouse_click(x, y, button, pressed, mouseButtonsPressed),
+            on_click = lambda x, y, button, pressed: self.mouse_click(x, y, button, pressed),
             on_scroll = lambda x, y, dx, dy: self.mouse_scroll(x, y, dx, dy)
         ) as listener:
             listener.join()
@@ -121,17 +121,21 @@ class Arm:
     def mouse_move(self, x, y):
         pass
 
-    def mouse_click(self, x, y, button, pressed, mouseButtonsPressed):
+    def mouse_click(self, x, y, button, pressed):
         if pressed:
             if button == mouse.Button.left:
                 print('mouse: left pressed')
+		        for servo_name, servo_command in self.mouse_controls[MouseControl.CLICK][MouseBind.LEFT].items():
+		            self.joints[servo_name].move(ControlType.MOUSE, servo_command)
             elif button == mouse.Button.right:
                 print('mouse: right pressed')
                 for servo_name, servo_command in self.mouse_controls[MouseControl.CLICK][MouseBind.RIGHT].items():
                     self.joints[servo_name].move(ControlType.MOUSE, servo_command)
             elif button == mouse.Button.middle:
                 print('mouse: middle pressed')
-
+                self.locked = True
+		
+    
     def mouse_scroll(self, x, y, dx, dy):
         if dy > 0:
             print('mouse: scroll up')

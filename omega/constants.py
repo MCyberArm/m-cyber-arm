@@ -38,11 +38,14 @@ class ServoName(Enum):
     GRABBER = 'grabber'
     ELBOW = 'elbow'
     WRIST = 'wrist'
+    ALL = 'all'
 
 class ServoCommand(Enum):
     UP = 'up'
     DOWN = 'down'
     TOGGLE = 'toggle'
+    MOVE = 'move'
+    LOCK = 'lock'
 
 class ControlType(Enum):
     KEYBOARD = 'Keyboard'
@@ -55,6 +58,7 @@ class MouseControl(Enum):
 
 class MouseBind(Enum):
     LEFT = 'left'
+    MIDDLE = 'middle'
     RIGHT = 'right'
     UP = 'up'
     DOWN = 'down'
@@ -62,7 +66,7 @@ class MouseBind(Enum):
 
 # controls
 CONTROLS_CONFIG_PATH = 'controls_config.txt'
-NUM_CONTROLS = 13       # number of controls specified in controls config file
+NUM_CONTROLS = 15       # number of controls specified in controls config file
 CONTROLS_DEFAULT_CONFIG = {
     ControlType.KEYBOARD: {
         ServoName.GRABBER: {ServoCommand.TOGGLE: '<space>'},
@@ -77,6 +81,8 @@ CONTROLS_DEFAULT_CONFIG = {
 
 CONTROLS_MOUSE_DEFAULT_CONFIG = {
     MouseControl.CLICK: {MouseBind.RIGHT: {ServoName.GRABBER: ServoCommand.TOGGLE}},
+    MouseControl.CLICK: {MouseBind.MIDDLE: {ServoName.ALL: ServoCommand.LOCK}},
+    MouseControl.CLICK: {MouseBind.LEFT: {ServoName.WRIST: ServoCommand.MOVE}},
     MouseControl.SCROLL: {MouseBind.UP: {ServoName.ELBOW: ServoCommand.UP}, MouseBind.DOWN: {ServoName.ELBOW: ServoCommand.DOWN}}
 }
 

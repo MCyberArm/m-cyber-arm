@@ -11,3 +11,5 @@ Controller wrist down <right_bumper>
 Mouse grabber toggle click right
 Mouse elbow up scroll up
 Mouse elbow down scroll down
+Mouse all lock click middle
+Mouse wrist toggle click left
