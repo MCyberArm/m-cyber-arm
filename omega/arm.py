@@ -4,8 +4,9 @@ arm.py
 The primary class that represents the arm's servos and any connected GUIs
 """
 
-# import RPi.GPIO as gpio
-# import pygame
+import pigpio
+import RPi.GPIO as gpio
+import pygame
 from pynput import mouse
 from tkinter import *
 import constants
@@ -17,6 +18,7 @@ from constants import MouseBind
 from joint import Joint
 
 class Arm:
+    
     def __init__(self):
         self.root = Tk()
         
@@ -38,6 +40,7 @@ class Arm:
         
         self.load_control_config()
         self.setup_joints()
+        global mouseButtonsPressed = [false, false, false]
     
     def load_control_config(self):
         self.controls = constants.CONTROLS_DEFAULT_CONFIG
@@ -74,8 +77,8 @@ class Arm:
                         f.write(control_type.value + " " + servo_name.value + " " + servo_command.value + " " + binding + "\n")
     
     def setup_joints(self):
-        # gpio.setmode(gpio.BCM)
-        # gpio.setwarnings(False)
+        gpio.setmode(gpio.BCM)
+        gpio.setwarnings(False)
         
         self.joints = {
             ServoName.GRABBER: Joint(ServoName.GRABBER.value, constants.GPIO_GRABBER, constants.GRABBER_POS_INIT, constants.GRABBER_POS_MIN, constants.GRABBER_POS_MAX, constants.SERVO_POS_DELTA, self.curr_control_type, self.locked, self.held, self.last_pressed_button_joint, self.last_pressed_button_command),
@@ -85,22 +88,22 @@ class Arm:
         
     def handle_joystick(self):
         count = 1
-        # count = pygame.joystick.get_count()
-        # if count == 1:
-        #     # controller is detected
-        #     controller = pygame.joystick.Joystick(0)
-        #     controller.init()
+        count = pygame.joystick.get_count()
+        if count == 1:
+            # controller is detected
+            controller = pygame.joystick.Joystick(0)
+            controller.init()
 
-        #     # only allows for one button to be pressed at a time
-        #     button_pressed = False
-        #     for servo_name, commands in self.controls[ControlType.CONTROLLER].items():
-        #         if button_pressed:
-        #             break
-        #         for servo_command, button in commands.items():
-        #             if controller.get_button(constants.CONTROLS_XBOX_BINDINGS[button]) == 1:
-        #                 joint.move(ControlType.CONTROLLER, servo_command)
-        #                 button_pressed = True
-        #                 break
+            # only allows for one button to be pressed at a time
+            button_pressed = False
+            for servo_name, commands in self.controls[ControlType.CONTROLLER].items():
+                if button_pressed:
+                    break
+                for servo_command, button in commands.items():
+                    if controller.get_button(constants.CONTROLS_XBOX_BINDINGS[button]) == 1:
+                        joint.move(ControlType.CONTROLLER, servo_command)
+                        button_pressed = True
+                        break
     
     def handle_physical_buttons(self):
         TODO = 1
@@ -110,7 +113,7 @@ class Arm:
         print('handle mouse input')
         with mouse.Listener(
             on_move = lambda x, y: self.mouse_move(x, y),
-            on_click = lambda x, y, button, pressed: self.mouse_click(x, y, button, pressed),
+            on_click = lambda x, y, button, pressed: self.mouse_click(x, y, button, pressed, mouseButtonsPressed),
             on_scroll = lambda x, y, dx, dy: self.mouse_scroll(x, y, dx, dy)
         ) as listener:
             listener.join()
@@ -118,7 +121,7 @@ class Arm:
     def mouse_move(self, x, y):
         pass
 
-    def mouse_click(self, x, y, button, pressed):
+    def mouse_click(self, x, y, button, pressed, mouseButtonsPressed):
         if pressed:
             if button == mouse.Button.left:
                 print('mouse: left pressed')
