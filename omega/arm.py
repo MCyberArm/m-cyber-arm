@@ -4,9 +4,9 @@ arm.py
 The primary class that represents the arm's servos and any connected GUIs
 """
 
-# import pigpio
-# import RPi.GPIO as gpio
-# import pygame
+import pigpio
+import RPi.GPIO as gpio
+import pygame
 from pynput import mouse
 from tkinter import *
 import constants
@@ -77,8 +77,8 @@ class Arm:
                         f.write(control_type.value + " " + servo_name.value + " " + servo_command.value + " " + binding + "\n")
     
     def setup_joints(self):
-        # gpio.setmode(gpio.BCM)
-        # gpio.setwarnings(False)
+        gpio.setmode(gpio.BCM)
+        gpio.setwarnings(False)
         
         self.joints = {
             ServoName.GRABBER: Joint(ServoName.GRABBER.value, constants.GPIO_GRABBER, constants.GRABBER_POS_INIT, constants.GRABBER_POS_MIN, constants.GRABBER_POS_MAX, constants.SERVO_POS_DELTA, self.curr_control_type, self.locked, self.held, self.last_pressed_button_joint, self.last_pressed_button_command),
@@ -91,7 +91,7 @@ class Arm:
         # count = pygame.joystick.get_count()
         # if count == 1:
         #     # controller is detected
-        #     controller = pygame.joystick.Joystick(0)
+       	#     controller = pygame.joystick.Joystick(0)
         #     controller.init()
 
         #     # only allows for one button to be pressed at a time
@@ -125,8 +125,8 @@ class Arm:
         if pressed:
             if button == mouse.Button.left:
                 print('mouse: left pressed')
-                # for servo_name, servo_command in self.mouse_controls[MouseControl.CLICK][MouseBind.LEFT].items():
-                #     self.joints[servo_name].move(ControlType.MOUSE, servo_command)
+                for servo_name, servo_command in self.mouse_controls[MouseControl.CLICK][MouseBind.LEFT].items():
+                    self.joints[servo_name].move(ControlType.MOUSE, servo_command)
             elif button == mouse.Button.right:
                 print('mouse: right pressed')
                 print(self.mouse_controls)
@@ -135,8 +135,7 @@ class Arm:
             elif button == mouse.Button.middle:
                 print('mouse: middle pressed')
                 for servo_name, servo in self.joints.items():
-                    servo.locked.set(not servo.locked.get())
-                # self.locked.set(not self.locked.get())
+                    self.joints[servo_name].move(ControlType.MOUSE, self.mouse_controls[MouseControl.CLICK][MouseBind.RIGHT])
         
     
     def mouse_scroll(self, x, y, dx, dy):
