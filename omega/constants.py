@@ -80,9 +80,10 @@ CONTROLS_DEFAULT_CONFIG = {
 }
 
 CONTROLS_MOUSE_DEFAULT_CONFIG = {
-    MouseControl.CLICK: {MouseBind.RIGHT: {ServoName.GRABBER: ServoCommand.TOGGLE}},
-    MouseControl.CLICK: {MouseBind.MIDDLE: {ServoName.ALL: ServoCommand.LOCK}},
-    MouseControl.CLICK: {MouseBind.LEFT: {ServoName.WRIST: ServoCommand.MOVE}},
+    MouseControl.CLICK: {
+        MouseBind.RIGHT: {ServoName.GRABBER: ServoCommand.TOGGLE},
+        MouseBind.MIDDLE: {ServoName.ALL: ServoCommand.LOCK},
+        MouseBind.LEFT: {ServoName.WRIST: ServoCommand.MOVE}},
     MouseControl.SCROLL: {MouseBind.UP: {ServoName.ELBOW: ServoCommand.UP}, MouseBind.DOWN: {ServoName.ELBOW: ServoCommand.DOWN}}
 }
 
