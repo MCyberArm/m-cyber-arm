@@ -16,7 +16,7 @@ from remap_ui import init_remap_ui
 
 
 def main():
-    arm = Arm()
+    arm = Arm('Keyboard')
     
     app = None
     

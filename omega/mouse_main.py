@@ -11,7 +11,7 @@ import constants
 
 
 def main():
-    arm = Arm()
+    arm = Arm('Mouse')
     
     arm.handle_mouse_input()
 

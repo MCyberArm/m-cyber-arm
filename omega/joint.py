@@ -15,7 +15,7 @@ from constants import ControlType
 
 
 class Joint:
-    def __init__(self, name, gpio_pin, init_pos, min_pos, max_pos, delta_pos, curr_control_type, locked, held, last_pressed_button_joint, last_pressed_button_command):
+    def __init__(self, name, gpio_pin, init_pos, min_pos, max_pos, delta_pos, curr_control_type, locked, held, last_pressed_button_joint, last_pressed_button_command, swap_rotate_enabled):
         self.name = name
         
         self.gpio_pin = gpio_pin
@@ -23,6 +23,9 @@ class Joint:
         self.min_pos = min_pos
         self.max_pos = max_pos
         self.delta_pos = delta_pos
+        
+        self.rotate_direction = 1
+        self.swap_rotate_enabled = swap_rotate_enabled
         
         self.curr_control_type = curr_control_type
         self.locked = locked
@@ -50,17 +53,20 @@ class Joint:
         remap_button.grid(row = row, column = column, columnspan = 4)
     
     def move(self, control_type, command):
+        if control_type != ControlType.MOUSE and control_type != ControlType.KEYBOARD and control_type != ControlType.CONTROLLER:
+            print('ERROR: invalid control type when calling move() for', self.name)
+        
         if self.locked.get():
             print(self.name, 'is locked')
             return
         
+        print('command:', command.value)
         if control_type != ControlType.MOUSE:
-            if control_type != None and control_type.value != self.curr_control_type.get():
+            if control_type.value != self.curr_control_type.get():
                 print(self.name + ': ' + control_type.value + ' is locked')
                 return
             
             # TODO: figure out how to interrupt the held loop (by pressing same button again)
-            print('command:', command.value)
             if self.held.get():
                 while True:
                     # update position
@@ -91,11 +97,20 @@ class Joint:
         elif command == ServoCommand.DOWN:
             self.pos = min(self.pos + self.delta_pos, self.max_pos)
         elif command == ServoCommand.TOGGLE:
-            # TODO: deal with case where joint is almost closed and then gets toggled (should open)
-            if self.pos == self.min_pos:
-                self.pos = self.max_pos
+            if not self.swap_rotate_enabled:
+                if self.pos == self.min_pos:
+                    self.pos = self.max_pos
+                else:
+                    self.pos = self.min_pos
             else:
-                self.pos = self.min_pos
+                if self.rotate_direction == 1:
+                    self.pos = min(self.pos + self.delta_pos, self.max_pos)
+                else:
+                    self.pos = max(self.pos - self.delta_pos, self.min_pos)
+                
+                if self.pos == self.min_pos or self.pos == self.max_pos:
+                    print(self.name + ': change direction')
+                    self.rotate_direction *= -1
         
         print(self.name + ' ' + command.value + ':', self.pos)
         
