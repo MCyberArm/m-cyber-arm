@@ -7,7 +7,6 @@ The primary class that represents the arm's servos and any connected GUIs
 # import pigpio
 # import RPi.GPIO as gpio
 # import pygame
-import threading
 from pynput import mouse
 from tkinter import *
 import constants
