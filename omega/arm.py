@@ -4,9 +4,10 @@ arm.py
 The primary class that represents the arm's servos and any connected GUIs
 """
 
-import pigpio
-import RPi.GPIO as gpio
-import pygame
+# import pigpio
+# import RPi.GPIO as gpio
+# import pygame
+import threading
 from pynput import mouse
 from tkinter import *
 import constants
@@ -18,15 +19,13 @@ from constants import MouseBind
 from joint import Joint
 
 class Arm:
-    
     def __init__(self):
         self.root = Tk()
         
         self.curr_control_type = StringVar(self.root)
         self.curr_control_type.set('Keyboard')
         
-        self.locked = BooleanVar(self.root)
-        self.locked.set(False)
+        self.locked = SystemLock(False)
         
         self.held = BooleanVar(self.root)
         self.held.set(False)
@@ -40,7 +39,6 @@ class Arm:
         
         self.load_control_config()
         self.setup_joints()
-        
     
     def load_control_config(self):
         self.controls = constants.CONTROLS_DEFAULT_CONFIG
@@ -77,8 +75,8 @@ class Arm:
                         f.write(control_type.value + " " + servo_name.value + " " + servo_command.value + " " + binding + "\n")
     
     def setup_joints(self):
-        gpio.setmode(gpio.BCM)
-        gpio.setwarnings(False)
+        # gpio.setmode(gpio.BCM)
+        # gpio.setwarnings(False)
         
         self.joints = {
             ServoName.GRABBER: Joint(ServoName.GRABBER.value, constants.GPIO_GRABBER, constants.GRABBER_POS_INIT, constants.GRABBER_POS_MIN, constants.GRABBER_POS_MAX, constants.SERVO_POS_DELTA, self.curr_control_type, self.locked, self.held, self.last_pressed_button_joint, self.last_pressed_button_command),
@@ -134,8 +132,10 @@ class Arm:
                     self.joints[servo_name].move(ControlType.MOUSE, servo_command)
             elif button == mouse.Button.middle:
                 print('mouse: middle pressed')
-                for servo_name, servo in self.joints.items():
-                    self.joints[servo_name].move(ControlType.MOUSE, self.mouse_controls[MouseControl.CLICK][MouseBind.RIGHT])
+                self.locked.toggle()
+                print('set lock to true' if self.locked.get() else 'set lock to false')
+                
+                # TODO: add joint to self.joints for ServoName.ALL???
         
     
     def mouse_scroll(self, x, y, dx, dy):
@@ -148,3 +148,19 @@ class Arm:
             for servo_name, servo_command in self.mouse_controls[MouseControl.SCROLL][MouseBind.DOWN].items():
                 self.joints[servo_name].move(ControlType.MOUSE, servo_command)
     
+
+class SystemLock:
+    def __init__(self, init_locked):
+        self.locked = init_locked
+    
+    def lock(self):
+        self.locked = True
+    
+    def unlock(self):
+        self.locked = False
+    
+    def toggle(self):
+        self.locked = not self.locked
+    
+    def get(self):
+        return self.locked

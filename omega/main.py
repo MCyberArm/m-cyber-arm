@@ -7,7 +7,7 @@ main.py
 - handles xbox controller input
 """
 
-import pygame
+# import pygame
 import time
 from arm import Arm
 import constants
