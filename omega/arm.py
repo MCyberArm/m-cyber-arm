@@ -4,9 +4,9 @@ arm.py
 The primary class that represents the arm's servos and any connected GUIs
 """
 
-# import pigpio
+import pigpio
 # import RPi.GPIO as gpio
-# import pygame
+import pygame
 from pynput import mouse
 from tkinter import *
 import constants
@@ -79,11 +79,17 @@ class Arm:
     def setup_joints(self):
         # gpio.setmode(gpio.BCM)
         # gpio.setwarnings(False)
-        
+
+        pi = pigpio.pi()
+ 
+        # pi.set_mode(constants.GPIO_GRABBER, pigpio.OUTPUT)
+        # pi.set_mode(constants.GPIO_ELBOW, pigpio.OUTPUT)
+        # pi.set_mode(constants.GPIO_WRIST, pigpio.OUTPUT)
+ 
         self.joints = {
-            ServoName.GRABBER: Joint(ServoName.GRABBER.value, constants.GPIO_GRABBER, constants.GRABBER_POS_INIT, constants.GRABBER_POS_MIN, constants.GRABBER_POS_MAX, constants.SERVO_POS_DELTA, self.curr_control_type, self.locked, self.held, self.last_pressed_button_joint, self.last_pressed_button_command),
-            ServoName.ELBOW: Joint(ServoName.ELBOW.value, constants.GPIO_ELBOW, constants.ELBOW_POS_INIT, constants.ELBOW_POS_MIN, constants.ELBOW_POS_MAX, constants.SERVO_POS_DELTA, self.curr_control_type, self.locked, self.held, self.last_pressed_button_joint, self.last_pressed_button_command),
-            ServoName.WRIST: Joint(ServoName.WRIST.value, constants.GPIO_WRIST, constants.WRIST_POS_INIT, constants.WRIST_POS_MIN, constants.WRIST_POS_MAX, constants.SERVO_POS_DELTA, self.curr_control_type, self.locked, self.held, self.last_pressed_button_joint, self.last_pressed_button_command)
+            ServoName.GRABBER: Joint(ServoName.GRABBER.value, constants.GPIO_GRABBER, constants.GRABBER_POS_INIT, constants.GRABBER_POS_MIN, constants.GRABBER_POS_MAX, constants.SERVO_POS_DELTA, self.curr_control_type, self.locked, self.held, self.last_pressed_button_joint, self.last_pressed_button_command, pi),
+            ServoName.ELBOW: Joint(ServoName.ELBOW.value, constants.GPIO_ELBOW, constants.ELBOW_POS_INIT, constants.ELBOW_POS_MIN, constants.ELBOW_POS_MAX, constants.SERVO_POS_DELTA, self.curr_control_type, self.locked, self.held, self.last_pressed_button_joint, self.last_pressed_button_command, pi),
+            ServoName.WRIST: Joint(ServoName.WRIST.value, constants.GPIO_WRIST, constants.WRIST_POS_INIT, constants.WRIST_POS_MIN, constants.WRIST_POS_MAX, constants.SERVO_POS_DELTA, self.curr_control_type, self.locked, self.held, self.last_pressed_button_joint, self.last_pressed_button_command, pi)
         }
         
     def handle_joystick(self):
