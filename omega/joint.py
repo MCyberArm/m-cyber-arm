@@ -4,8 +4,7 @@ joint.py
 A controllable servo on the arm
 """
 
-# import pigpio
-# import RPi.GPIO as gpio
+import pigpio
 from tkinter import *
 import time
 import constants
@@ -15,7 +14,7 @@ from constants import ControlType
 
 
 class Joint:
-    def __init__(self, name, gpio_pin, init_pos, min_pos, max_pos, delta_pos, curr_control_type, locked, held, last_pressed_button_joint, last_pressed_button_command, swap_rotate_enabled):
+    def __init__(self, name, gpio_pin, init_pos, min_pos, max_pos, delta_pos, curr_control_type, locked, held, last_pressed_button_joint, last_pressed_button_command, pi, swap_rotate_enabled):
         self.name = name
         
         self.gpio_pin = gpio_pin
@@ -36,10 +35,8 @@ class Joint:
         
         self.remap_ui_button_texts = {}
         
-        # gpio.setup(gpio_pin, gpio.OUT)
-        # self.pwm = gpio.PWM(gpio_pin, constants.SERVO_HERTZ)
-        # self.pwm.start(init_pos)
-    
+        self.pi = pi
+
     def setup_ui_button(self, app, command_type, text, row, column):
         button = Button(app, font = '-weight bold', text = text, command = lambda: self.move(None, command_type), width = 16, height = 4)
         button.grid(row = row, column = column, columnspan = 3)
@@ -82,8 +79,8 @@ class Joint:
                     
                     # update position of joint
                     print(self.name + ' ' + command.value + ':', self.pos)
-                    # self.pwm.ChangeDutyCycle(self.pos)
-                    
+                    self.pi.set_PWM_dutycycle(self.gpio_pin, self.pos)
+
                     if command == ServoCommand.UP and self.pos == self.min_pos: break
                     elif command == ServoCommand.DOWN and self.pos == self.max_pos: break
                     elif command == ServoCommand.TOGGLE: break
@@ -115,8 +112,7 @@ class Joint:
         print(self.name + ' ' + command.value + ':', self.pos)
         
         # update position of joint
-        # self.pwm.ChangeDutyCycle(self.pos)
-
+        self.pi.set_PWM_dutycycle(self.gpio_pin, self.pos)
 
 def remap_start(joint, command):
     joint.last_pressed_button_joint.set(joint.name)
