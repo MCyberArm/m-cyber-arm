@@ -37,6 +37,8 @@ class Joint:
         
         self.pi = pi
 
+        self.pi.set_servo_pulsewidth(self.gpio_pin, self.pos)
+
     def setup_ui_button(self, app, command_type, text, row, column):
         button = Button(app, font = '-weight bold', text = text, command = lambda: self.move(None, command_type), width = 16, height = 4)
         button.grid(row = row, column = column, columnspan = 3)
@@ -52,17 +54,17 @@ class Joint:
     def move(self, control_type, command):
         if control_type != ControlType.MOUSE and control_type != ControlType.KEYBOARD and control_type != ControlType.CONTROLLER:
             print('ERROR: invalid control type when calling move() for', self.name)
-        
+
         if self.locked.get():
             print(self.name, 'is locked')
             return
-        
+
         print('command:', command.value)
         if control_type != ControlType.MOUSE:
             if control_type.value != self.curr_control_type.get():
                 print(self.name + ': ' + control_type.value + ' is locked')
                 return
-            
+
             # TODO: figure out how to interrupt the held loop (by pressing same button again)
             if self.held.get():
                 while True:
@@ -76,10 +78,10 @@ class Joint:
                             self.pos = self.max_pos
                         else:
                             self.pos = self.min_pos
-                    
+
                     # update position of joint
                     print(self.name + ' ' + command.value + ':', self.pos)
-                    self.pi.set_PWM_dutycycle(self.gpio_pin, self.pos)
+                    self.pi.set_servo_pulsewidth(self.gpio_pin, self.pos)
 
                     if command == ServoCommand.UP and self.pos == self.min_pos: break
                     elif command == ServoCommand.DOWN and self.pos == self.max_pos: break
@@ -112,7 +114,9 @@ class Joint:
         print(self.name + ' ' + command.value + ':', self.pos)
         
         # update position of joint
-        self.pi.set_PWM_dutycycle(self.gpio_pin, self.pos)
+	# second parameter should be frequency, not pos
+        self.pi.set_servo_pulsewidth(self.gpio_pin, self.pos)
+        #self.pi.set_PWM_dutycycle(self.gpio_pin, self.pos)
 
 def remap_start(joint, command):
     joint.last_pressed_button_joint.set(joint.name)
